@@ -7,6 +7,8 @@ package pl.jblew.marinesmud.dj.scene;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.awt.Component;
+import javax.swing.JComponent;
+import jiconfont.IconCode;
 
 /**
  *
@@ -17,5 +19,7 @@ public interface DMXDevice {
     public String getName();
     public int getStartAddress();
     public int getChannelCount();
-    public Component newComponent();
+    public JComponent newComponent();
+    public byte [] calculateLevels();
+    public IconCode getIconCode();
 }

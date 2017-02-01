@@ -1,0 +1,44 @@
+{
+  "setups" : [ {
+    "setupName" : "defaultSetup",
+    "devices" : [ {
+      "@class" : "pl.jblew.marinesmud.dj.scene.devices.LedBar",
+      "name" : "pod_scena_1",
+      "address" : 9,
+      "min" : 0,
+      "max" : 255,
+      "componentRef" : null
+    }, {
+      "@class" : "pl.jblew.marinesmud.dj.scene.devices.LedBar",
+      "name" : "pod_scena_2",
+      "address" : 10,
+      "min" : 0,
+      "max" : 255,
+      "componentRef" : null
+    }, {
+      "@class" : "pl.jblew.marinesmud.dj.scene.devices.LedBar",
+      "name" : "pod_scena_3",
+      "address" : 11,
+      "min" : 0,
+      "max" : 255,
+      "componentRef" : null
+    }, {
+      "@class" : "pl.jblew.marinesmud.dj.scene.devices.LedBar",
+      "name" : "pod_scena_4",
+      "address" : 12,
+      "min" : 0,
+      "max" : 255,
+      "componentRef" : null
+    }, {
+      "@class" : "pl.jblew.marinesmud.dj.scene.devices.LedBar",
+      "name" : "pod_scena_5",
+      "address" : 13,
+      "min" : 0,
+      "max" : 255,
+      "componentRef" : null
+    } ],
+    "groups" : {
+      "pod_scena" : [ "pod_scena_1", "pod_scena_2", "pod_scena_3", "pod_scena_4", "pod_scena_5" ]
+    }
+  } ]
+}

@@ -22,6 +22,7 @@
  */
 package pl.jblew.marinesmud.dj.tarsos;
 
+import pl.jblew.marinesmud.dj.gui.NorthToolbar;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -65,6 +66,7 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JToolBar;
 import pl.jblew.marinesmud.dj.visualise.ColorophoneWindow;
 
 public class Spectrogram extends JFrame implements PitchDetectionHandler {
@@ -122,7 +124,7 @@ public class Spectrogram extends JFrame implements PitchDetectionHandler {
 
         JPanel pitchDetectionPanel = new PitchDetectionPanel(algoChangeListener);
 
-        JPanel inputPanel = new InputPanel();
+        JToolBar inputPanel = new InputPanel();
 
         inputPanel.addPropertyChangeListener("mixer",
                 new PropertyChangeListener() {

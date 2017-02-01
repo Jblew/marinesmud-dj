@@ -29,6 +29,7 @@ package pl.jblew.marinesmud.dj.tarsos;
 */
 
 
+import pl.jblew.marinesmud.dj.gui.NorthToolbar;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
@@ -67,6 +68,7 @@ import be.tarsos.dsp.filters.LowPassSP;
 import be.tarsos.dsp.io.jvm.JVMAudioInputStream;
 import be.tarsos.dsp.onsets.OnsetHandler;
 import be.tarsos.dsp.onsets.PercussionOnsetDetector;
+import javax.swing.JToolBar;
 import pl.jblew.marinesmud.dj.visualise.SmallColorChanger;
 
 
@@ -89,7 +91,7 @@ public class PercussionDetector extends JFrame implements OnsetHandler {
                 
                 scc = new SmallColorChanger();
 			
-		JPanel inputPanel = new InputPanel();
+		JToolBar inputPanel = new InputPanel();
 		inputPanel.addPropertyChangeListener("mixer",
 				new PropertyChangeListener() {
 					@Override

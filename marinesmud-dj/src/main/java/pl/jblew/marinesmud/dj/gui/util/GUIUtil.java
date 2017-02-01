@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.jblew.marinesmud.dj.util;
+package pl.jblew.marinesmud.dj.gui.util;
 
 import javax.swing.SwingUtilities;
+import pl.jblew.marinesmud.dj.util.GUIProcessingOutsideEDTThreadException;
 
 /**
  *

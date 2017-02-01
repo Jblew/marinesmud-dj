@@ -5,6 +5,7 @@
  */
 package pl.jblew.marinesmud.dj.effects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -20,12 +21,12 @@ import pl.jblew.marinesmud.dj.sound.processors.Processor;
  * @author teofil
  */
 public class EmptyEffect implements Effect {
-    private final EmptyEffect aThis = this;
     
     public EmptyEffect(SoundProcessingManager spm) {
     }
     
     @Override
+    @JsonIgnore
     public String getName() {
         return "None";
     }
@@ -36,6 +37,7 @@ public class EmptyEffect implements Effect {
     }
 
     @Override
+    @JsonIgnore
     public Processor[] getRequiredProcessors() {
         return new Processor [] {};
     }
@@ -64,7 +66,7 @@ public class EmptyEffect implements Effect {
 
         @Override
         public Effect getEffect() {
-            return aThis;
+            return EmptyEffect.this;
         }
 
         @Override

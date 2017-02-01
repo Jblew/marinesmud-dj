@@ -24,7 +24,6 @@ public class Effects implements Iterable<Effect> {
         effects.add(effect);
     }
 
-
     @Override
     public Iterator<Effect> iterator() {
         return effects.iterator();

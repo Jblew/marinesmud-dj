@@ -5,6 +5,7 @@
  */
 package pl.jblew.marinesmud.dj.effects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,13 +27,13 @@ import pl.jblew.marinesmud.dj.util.Listener;
  * @author teofil
  */
 public class SpectrogramPreview implements Effect {
-    private final SpectrogramPreview aThis = this;
     
     public SpectrogramPreview(SoundProcessingManager spm) {
 
     }
 
     @Override
+    @JsonIgnore
     public String getName() {
         return "Spectrogram preview";
     }
@@ -43,6 +44,7 @@ public class SpectrogramPreview implements Effect {
     }
     
     @Override
+    @JsonIgnore
     public Processor [] getRequiredProcessors() {
         return new Processor [] {FFTProcessor.getInstance()};
     }
@@ -78,7 +80,7 @@ public class SpectrogramPreview implements Effect {
 
         @Override
         public Effect getEffect() {
-            return aThis;
+            return SpectrogramPreview.this;
         }
         
         @Override

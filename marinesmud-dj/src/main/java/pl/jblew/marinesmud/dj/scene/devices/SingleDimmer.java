@@ -24,37 +24,29 @@ import pl.jblew.marinesmud.dj.scene.RGBDevice;
  *
  * @author teofil
  */
-public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
+public class SingleDimmer implements DMXDevice, DimmableDevice {
     public String name;
     public int address;
     public int min = 0;
     public int max = 255;
     
     @JsonIgnore
-    public final Object sync = new Object();
+    public final AtomicReference<Float> valueRef = new AtomicReference<>(0f);
     
     @JsonIgnore
     public final AtomicReference<Color> currentColorRef = new AtomicReference<>(Color.BLACK);
     @JsonIgnore
     public final AtomicReference<JPanel> componentRef = new AtomicReference<>(null);
     
-    public LedBar(String name, int address) {
+    public SingleDimmer(String name, int address) {
         this.name = name;
         this.address = address;
     }
     
-    public LedBar() {
+    public SingleDimmer() {
         
     }
-    
-    @Override
-    public void setColor(final Color newColor) {
-        currentColorRef.set(newColor);
-        JPanel panel = componentRef.get();
-        if(panel != null) {
-            SwingUtilities.invokeLater(() -> panel.setBackground(newColor));
-        }
-    }
+
 
     @Override
     @JsonIgnore
@@ -65,7 +57,7 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
     @Override
     @JsonIgnore
     public int getChannelCount() {
-        return 3;
+        return 1;
     }
 
     @Override
@@ -86,9 +78,8 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
 
     @Override
     public byte[] calculateLevels() {
-        Color c = currentColorRef.get();
-        if(c == null) return new byte [] {};
-        else  return new byte [] {(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()};
+        float f = valueRef.get();
+        return new byte [] {(byte)(int)(f*255f)};
     }
 
     @Override
@@ -98,12 +89,10 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
 
     @Override
     public void setCommonLevel(float level) {
-        int v = (int)(255f*level);
-        setColor(new Color(v, v, v));
+        valueRef.set(level);
     }
 
     @Override
-    @JsonIgnore
     public IconCode getIconCode() {
         return GoogleMaterialDesignIcons.COLOR_LENS;
     }

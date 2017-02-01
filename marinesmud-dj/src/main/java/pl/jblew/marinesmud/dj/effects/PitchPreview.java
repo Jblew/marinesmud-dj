@@ -5,6 +5,7 @@
  */
 package pl.jblew.marinesmud.dj.effects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,13 +26,12 @@ import pl.jblew.marinesmud.dj.util.Listener;
  * @author teofil
  */
 public class PitchPreview implements Effect {
-    private final PitchPreview aThis = this;
-
     public PitchPreview(SoundProcessingManager spm) {
 
     }
 
     @Override
+    @JsonIgnore
     public String getName() {
         return "Pitch preview";
     }
@@ -42,6 +42,7 @@ public class PitchPreview implements Effect {
     }
 
     @Override
+    @JsonIgnore
     public Processor[] getRequiredProcessors() {
         return new Processor[]{PitchProcessor.getInstance()};
     }
@@ -77,7 +78,7 @@ public class PitchPreview implements Effect {
 
         @Override
         public Effect getEffect() {
-            return aThis;
+            return PitchPreview.this;
         }
 
         @Override

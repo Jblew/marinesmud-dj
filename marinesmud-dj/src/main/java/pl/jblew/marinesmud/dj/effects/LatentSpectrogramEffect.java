@@ -25,8 +25,7 @@ import pl.jblew.marinesmud.dj.util.Listener;
  * @author teofil
  */
 public class LatentSpectrogramEffect implements Effect {
-    private final LatentSpectrogramEffect aThis = this;
-    private final int width;
+    private int width;
 
     public LatentSpectrogramEffect(int width, SoundProcessingManager spm) {
         if (width % 2 == 0) {
@@ -79,7 +78,7 @@ public class LatentSpectrogramEffect implements Effect {
 
         @Override
         public Effect getEffect() {
-            return aThis;
+            return LatentSpectrogramEffect.this;
         }
 
         @Override

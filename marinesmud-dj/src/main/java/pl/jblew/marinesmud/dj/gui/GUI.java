@@ -11,37 +11,41 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.sound.sampled.Mixer;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
+import java.awt.*;
 import javax.swing.border.TitledBorder;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
+import pl.jblew.marinesmud.dj.dmx.OutputManager;
+import pl.jblew.marinesmud.dj.dmx.PortChangeListener;
 import pl.jblew.marinesmud.dj.effects.Effects;
+import pl.jblew.marinesmud.dj.gui.graphed.DMXFlowChart;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.sound.MixerChangeListener;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
-import pl.jblew.marinesmud.dj.tarsos.InputPanel;
-import pl.jblew.marinesmud.dj.util.GUIUtil;
+import pl.jblew.marinesmud.dj.gui.util.GUIUtil;
 
 /**
  *
  * @author teofil
  */
 public class GUI {
+    private final OutputManager outputManager;
     private final SoundProcessingManager spm;
     private final JFrame frame;
     //private final BWSpectrogramPanel spectrogramPanel;
     private final MixerChangeListener mixerChangeListener;
+    private final PortChangeListener portChangeListener;
     private final Effects effects;
     private final SceneSetup.Current sceneSetup;
 
-    public GUI(final MixerChangeListener mixerChangeListener, Effects effects, SoundProcessingManager spm, SceneSetup.Current sceneSetup) {
+    public GUI(MixerChangeListener mixerChangeListener, PortChangeListener portChangeListener, Effects effects, SoundProcessingManager spm, SceneSetup.Current sceneSetup, OutputManager outputManager) {
         this.mixerChangeListener = mixerChangeListener;
+        this.portChangeListener = portChangeListener;
         this.spm = spm;
         this.effects = effects;
         this.sceneSetup = sceneSetup;
+        this.outputManager = outputManager;
 
         GUIUtil.assertEDTThread();
         this.frame = new JFrame();
@@ -60,25 +64,23 @@ public class GUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("MarinesmudDJ");
 
-        JPanel northPanel = new JPanel();
-        northPanel.setLayout(new GridLayout(1, 2));
+        NorthToolbar toolBar = new NorthToolbar(outputManager);
 
-        JPanel inputPanel = new InputPanel();
-
-        inputPanel.addPropertyChangeListener("mixer", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent arg0) {
-                mixerChangeListener.mixerChanged((Mixer) arg0.getNewValue());
-            }
+        toolBar.addPropertyChangeListener("mixer", (evt) -> {
+            mixerChangeListener.mixerChanged((Mixer) evt.getNewValue());
         });
-        northPanel.add(inputPanel);
         
-        JScrollPane sceneScroll = new JScrollPane(new ScenePanel(sceneSetup));
+        toolBar.addPropertyChangeListener("port", (evt) -> {
+            portChangeListener.portChanged((String) evt.getNewValue());
+        });
+        
+        frame.add(toolBar, BorderLayout.NORTH);
+        
+        /*JScrollPane sceneScroll = new JScrollPane(new ScenePanel(sceneSetup));
         sceneScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sceneScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        northPanel.add(sceneScroll);
 
-        frame.add(northPanel, BorderLayout.NORTH);
+        frame.add(sceneScroll, BorderLayout.EAST);*/
 
         JPanel effectsPanel = new JPanel(new GridLayout(1, 0, 5, 5));
         //effectsPanel.add(spectrogramPanel, BorderLayout.CENTER);
@@ -99,9 +101,19 @@ public class GUI {
         }));
         effectsPanel.add(aep.get());
 
-        JScrollPane scrollPane = new JScrollPane(effectsPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
+        //DMXFlowChart flowChart = new DMXFlowChart(sceneSetup);
+        //frame.add(flowChart.createComponent(), BorderLayout.SOUTH);
+        
+        JScrollPane scrollPane = new JScrollPane(effectsPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);     
         frame.add(scrollPane, BorderLayout.CENTER);
+        
+        JScrollPane sceneScroll = new JScrollPane(new GroupLinesPanel(effects, spm, sceneSetup));
+        sceneScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sceneScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sceneScroll.setPreferredSize(new Dimension(800,300));
+        frame.add(sceneScroll, BorderLayout.SOUTH);
+        
+        
         frame.pack();
         frame.setSize(800, 600);
         frame.setVisible(true);

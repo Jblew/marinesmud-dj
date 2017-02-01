@@ -25,13 +25,10 @@ import pl.jblew.marinesmud.dj.sound.processors.Processor;
 public class LiveSoundProcessor {
     
     
-    private final FFTProcessor fftProcessor;
-
     private AudioDispatcher dispatcher;
     private Mixer currentMixer;
 
-    public LiveSoundProcessor(FFTProcessor fftProcessor) {
-        this.fftProcessor = fftProcessor;
+    public LiveSoundProcessor() {
     }
 
     public void setNewMixer(Mixer mixer, Processor [] processorChain) throws LineUnavailableException, UnsupportedAudioFileException {

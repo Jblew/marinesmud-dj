@@ -29,6 +29,7 @@ package pl.jblew.marinesmud.dj.tarsos;
 */
 
 
+import pl.jblew.marinesmud.dj.gui.NorthToolbar;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,6 +58,7 @@ import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.pitch.PitchProcessor.PitchEstimationAlgorithm;
+import javax.swing.JToolBar;
 
 public class PitchDetectorExample extends JFrame implements PitchDetectionHandler {
 
@@ -91,7 +93,7 @@ public class PitchDetectorExample extends JFrame implements PitchDetectionHandle
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle("Pitch Detector");
 		
-		JPanel inputPanel = new InputPanel();
+		JToolBar inputPanel = new InputPanel();
 		add(inputPanel);
 		inputPanel.addPropertyChangeListener("mixer",
 				new PropertyChangeListener() {

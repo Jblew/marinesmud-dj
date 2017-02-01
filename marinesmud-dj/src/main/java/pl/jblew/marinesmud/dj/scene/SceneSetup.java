@@ -5,6 +5,7 @@
  */
 package pl.jblew.marinesmud.dj.scene;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Arrays;
 import pl.jblew.marinesmud.dj.scene.devices.LedBar;
 import java.util.HashMap;
@@ -20,23 +21,27 @@ public class SceneSetup {
     public String setupName = "defaultSetup";
     
     public DMXDevice [] devices = new DMXDevice [] {
-        new LedBar("pod_scena_1", 101),
-        new LedBar("pod_scena_2", 102),
-        new LedBar("pod_scena_3", 103),
-        new LedBar("pod_scena_4", 104),
-        new LedBar("pod_scena_5", 105)
+        new LedBar("pod_scena_1", 9),
+        new LedBar("pod_scena_2", 10),
+        new LedBar("pod_scena_3", 11),
+        new LedBar("pod_scena_4", 12),
+        new LedBar("pod_scena_5", 13)
     };
     
-    public Map<String, String[]> groups = new HashMap<>();
+    public DeviceGroup.Serializator [] groups;
+    {
+        DeviceGroup.Serializator s = new DeviceGroup.Serializator("PodScena", new String [] {"pod_scena_1", "pod_scena_2", "pod_scena_3", "pod_scena_4", "pod_scena_5"});    
+        //s.effects = new Effect[] {Effects.}
+        groups = new DeviceGroup.Serializator [] {s};
+    }
     
-    public SceneSetup() {
-        groups.put("pod_scena", new String [] {
-            "pod_scena_1",
-            "pod_scena_2",
-            "pod_scena_3",
-            "pod_scena_4",
-            "pod_scena_5"
-        });
+    @JsonIgnore
+    public int getMaxAddr() {
+        int maxAddr = 1;
+        for(DMXDevice d : devices) {
+            maxAddr = Math.max(d.getStartAddress()+d.getChannelCount()-1, maxAddr);
+        }
+        return maxAddr;
     }
     
     public static class Current {
@@ -49,18 +54,8 @@ public class SceneSetup {
             groupsList.add(new DeviceGroup("empty_group", new DMXDevice[]{}));
             
             int i = 0;
-            for(String groupName : setup.groups.keySet()) {
-                List<DMXDevice> devicesInGroup = new LinkedList<>();
-                
-                for(final String deviceName : setup.groups.get(groupName)) {
-                    DMXDevice device = Arrays.stream(devices)
-                            .filter((DMXDevice d) -> d.getName().equals(deviceName))
-                            .findFirst().orElse(null);
-                    if(device != null) devicesInGroup.add(device);
-                }
-                
-                DeviceGroup group = new DeviceGroup(groupName, devicesInGroup.toArray(new DMXDevice [] {}));
-                groupsList.add(group);
+            for(DeviceGroup.Serializator s : setup.groups) {
+                groupsList.add(s.toGroup(setup.devices));
             }
             
             groups = groupsList.toArray(new DeviceGroup [] {});

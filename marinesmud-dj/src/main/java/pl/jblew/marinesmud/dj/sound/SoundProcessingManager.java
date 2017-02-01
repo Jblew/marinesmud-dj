@@ -35,7 +35,7 @@ public class SoundProcessingManager {
     private final AtomicReference<Mixer> currentMixerRef = new AtomicReference<>(null);
 
     public SoundProcessingManager(SceneSetup.Current sceneSetup) {
-        lsp = new LiveSoundProcessor(null);
+        lsp = new LiveSoundProcessor();
 
         mixerChangeListener = mixer -> updateMixer(mixer);
         this.sceneSetup = sceneSetup;
