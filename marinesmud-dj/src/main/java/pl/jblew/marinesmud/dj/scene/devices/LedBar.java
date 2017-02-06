@@ -7,16 +7,14 @@ package pl.jblew.marinesmud.dj.scene.devices;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
+import pl.jblew.marinesmud.dj.clock.ClockWorker;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
-import pl.jblew.marinesmud.dj.scene.DimmableDevice;
 import pl.jblew.marinesmud.dj.gui.util.GUIUtil;
 import pl.jblew.marinesmud.dj.scene.RGBDevice;
 
@@ -24,35 +22,35 @@ import pl.jblew.marinesmud.dj.scene.RGBDevice;
  *
  * @author teofil
  */
-public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
+public class LedBar extends DMXDevice implements RGBDevice {
     public String name;
     public int address;
     public int min = 0;
     public int max = 255;
-    
+
     @JsonIgnore
     public final Object sync = new Object();
-    
     @JsonIgnore
-    public final AtomicReference<Color> currentColorRef = new AtomicReference<>(Color.BLACK);
+    private float[] levels = new float[]{0f, 0f, 0f};
     @JsonIgnore
     public final AtomicReference<JPanel> componentRef = new AtomicReference<>(null);
-    
+
     public LedBar(String name, int address) {
         this.name = name;
         this.address = address;
     }
-    
+
     public LedBar() {
-        
+
     }
-    
+
     @Override
     public void setColor(final Color newColor) {
-        currentColorRef.set(newColor);
-        JPanel panel = componentRef.get();
-        if(panel != null) {
-            SwingUtilities.invokeLater(() -> panel.setBackground(newColor));
+        if (!ClockWorker.isInClockTaskThread()) {
+            throw new RuntimeException("DMX values should be set in clock tasks thread");
+        }
+        synchronized (sync) {
+            levels = newColor.getRGBColorComponents(null);
         }
     }
 
@@ -67,6 +65,12 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
     public int getChannelCount() {
         return 3;
     }
+    
+    @Override
+    @JsonIgnore
+    public int getLevelsCount() {
+        return 3;
+    }
 
     @Override
     public String getName() {
@@ -74,11 +78,13 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
     }
 
     @Override
-    public JComponent newComponent() {
+    public JComponent newPreviewComponent() {
         GUIUtil.assertEDTThread();
-        
+
         JPanel panel = new JPanel();
-        panel.setBackground(currentColorRef.get());
+        synchronized (sync) {
+            panel.setBackground(new Color(levels[0], levels[1], levels[2]));
+        }
         panel.setPreferredSize(new Dimension(48, 48));
         componentRef.set(panel);
         return panel;
@@ -86,20 +92,9 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
 
     @Override
     public byte[] calculateLevels() {
-        Color c = currentColorRef.get();
-        if(c == null) return new byte [] {};
-        else  return new byte [] {(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()};
-    }
-
-    @Override
-    public void setMasterGain(float level) {
-        
-    }
-
-    @Override
-    public void setCommonLevel(float level) {
-        int v = (int)(255f*level);
-        setColor(new Color(v, v, v));
+        synchronized (sync) {
+            return new byte[]{(byte) (levels[0] * 255f), (byte) (levels[1] * 255f), (byte) (levels[2] * 255f)};
+        }
     }
 
     @Override
@@ -107,6 +102,42 @@ public class LedBar implements DMXDevice, RGBDevice, DimmableDevice {
     public IconCode getIconCode() {
         return GoogleMaterialDesignIcons.COLOR_LENS;
     }
-    
-    
+
+    @Override
+    public void processValues() {
+    }
+
+    @Override
+    public void updatePreview() {
+        GUIUtil.assertEDTThread();
+        JPanel panel = componentRef.get();
+        if (panel != null) {
+            synchronized (sync) {
+                panel.setBackground(new Color(levels[0], levels[1], levels[2]));
+            }
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    public float[] getLevels() {
+        synchronized(sync) {
+            return levels;
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    public void setLevels(float[] levels) {
+        synchronized(sync) {
+            this.levels = levels;
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    public Object getSync() {
+        return sync;
+    }
+
 }

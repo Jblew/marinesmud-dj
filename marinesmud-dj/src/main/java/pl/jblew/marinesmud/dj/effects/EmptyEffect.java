@@ -22,7 +22,7 @@ import pl.jblew.marinesmud.dj.sound.processors.Processor;
  */
 public class EmptyEffect implements Effect {
     
-    public EmptyEffect(SoundProcessingManager spm) {
+    public EmptyEffect() {
     }
     
     @Override
@@ -46,6 +46,11 @@ public class EmptyEffect implements Effect {
     public EffectWorker newWorker(DeviceGroup initialDeviceGroup) {
         return new MyWorker(initialDeviceGroup);
     }
+
+    @Override
+    public Effect deriveEffect() {
+        return new EmptyEffect();
+    }
     
     private class MyWorker extends EffectWorker {
         //private final Listener listener = (attachment) -> {};
@@ -55,14 +60,9 @@ public class EmptyEffect implements Effect {
         }
         
         @Override
-        public void init() {
-            //Processor.getInstance().addListener(listener);
+        public void reload() {
         }
 
-        @Override
-        public void stop() {
-            //Processor.getInstance().removeListener(listener);
-        }
 
         @Override
         public Effect getEffect() {
@@ -75,7 +75,16 @@ public class EmptyEffect implements Effect {
         }
 
         @Override
-        public void setDeviceGroup(DeviceGroup group) {
+        public void process(SoundProcessingManager spm, boolean isFirstInChain) {
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return false;
         }
         
     }

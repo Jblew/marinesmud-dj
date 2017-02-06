@@ -48,7 +48,7 @@ public class ClockWorker {
             Thread.currentThread().setName("ClockWorker-tasks");
 
             while (true) {
-                //System.out.println("Tick TASKS");
+                //System.out.println("\n\n>");
                 long sTime = System.currentTimeMillis();
 
                 for (RunnableRef taskRef : tasks) {
@@ -137,6 +137,13 @@ public class ClockWorker {
 
     public void setDMXTask(Runnable task) {
         dmxTaskRef.set(task);
+    }
+    public int getPercentBusy() {
+        return percentBusy.get();
+    }
+    
+    public static boolean isInClockTaskThread() {
+        return Thread.currentThread().getName().equals("ClockWorker-tasks");
     }
     
     private static class RunnableRef extends AtomicReference<Runnable> {

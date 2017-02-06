@@ -118,7 +118,7 @@ public class BWSpectrogramPanel extends JComponent implements ComponentListener 
         }
         
 
-        repaint();
+        updateUI();
         position += 3;
         position = position % getWidth();
     }

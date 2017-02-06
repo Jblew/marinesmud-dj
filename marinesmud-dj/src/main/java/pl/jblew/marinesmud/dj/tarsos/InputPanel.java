@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import pl.jblew.marinesmud.dj.config.Config;
 import pl.jblew.marinesmud.dj.dmx.SerialOutputManager;
+import pl.jblew.marinesmud.dj.scene.Scene;
 
 /**
  *
@@ -38,7 +39,7 @@ public class InputPanel extends JToolBar {
 
         this.add(inputSelector);
 
-        JComboBox portSelector = new JComboBox(new SerialOutputManager(null, new Config()).listSerialPorts());
+        JComboBox portSelector = new JComboBox(new SerialOutputManager(null, new Scene()).listSerialPorts());
 
         this.add(portSelector);
         this.addSeparator();

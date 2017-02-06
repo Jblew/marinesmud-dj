@@ -5,8 +5,10 @@
  */
 package pl.jblew.marinesmud.dj.effects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -25,9 +27,13 @@ import pl.jblew.marinesmud.dj.util.Listener;
  * @author teofil
  */
 public class LatentSpectrogramEffect implements Effect {
-    private int width;
+    public int width = 1;
+    public boolean enabled = true;
 
-    public LatentSpectrogramEffect(int width, SoundProcessingManager spm) {
+    @JsonIgnore
+    private final Object sync = new Object();
+
+    public LatentSpectrogramEffect(int width) {
         if (width % 2 == 0) {
             throw new IllegalArgumentException("Width must be: 1, 3, 5 or 7");
         }
@@ -35,6 +41,10 @@ public class LatentSpectrogramEffect implements Effect {
             throw new IllegalArgumentException("Width must be: 1, 3, 5 or 7");
         }
         this.width = width;
+    }
+
+    public LatentSpectrogramEffect() {
+
     }
 
     @Override
@@ -57,23 +67,26 @@ public class LatentSpectrogramEffect implements Effect {
         return new MyWorker(initialDeviceGroup);
     }
 
+    @Override
+    public LatentSpectrogramEffect deriveEffect() {
+        synchronized (sync) {
+            LatentSpectrogramEffect clone = new LatentSpectrogramEffect();
+            clone.enabled = this.enabled;
+            clone.width = this.width;
+            return clone;
+        }
+    }
+
     private class MyWorker extends EffectWorker {
-        private final AtomicReference<DeviceGroup> deviceGroupRef = new AtomicReference<>(null);
+        private final DeviceGroup deviceGroup;
         private final AtomicReference<LatentSpectrogramEffectPanel> myPanelRef = new AtomicReference<>(null);
-        private final Listener listener = (attachment) -> processPitch((Float) attachment);
 
-        public MyWorker(DeviceGroup initialDeviceGroup) {
-            deviceGroupRef.set(initialDeviceGroup);
+        public MyWorker(DeviceGroup deviceGroup) {
+            this.deviceGroup = deviceGroup;
         }
 
         @Override
-        public void init() {
-            PitchProcessor.getInstance().addListener(listener);
-        }
-
-        @Override
-        public void stop() {
-            PitchProcessor.getInstance().removeListener(listener);
+        public void reload() {
         }
 
         @Override
@@ -88,64 +101,88 @@ public class LatentSpectrogramEffect implements Effect {
             return p;
         }
 
-        @Override
-        public void setDeviceGroup(DeviceGroup group) {
-            deviceGroupRef.set(group);
-        }
-
         private float lastHue = 0;
 
-        private void processPitch(float pitch) {
-            if (pitch > 0) {
-                float hue = (float) SpectrogramPanel.frequencyToBin(pitch, 1000) / 1000f;
-                float difference = hue - lastHue;
-                float newhue0 = lastHue + Math.min(Math.max(difference, -0.01f), 0.01f);
-                float newhue1 = lastHue + Math.min(Math.max(difference, -0.04f), 0.04f);
-                float newhue2 = lastHue + Math.min(Math.max(difference, -0.3f), 0.3f);
-                float newhue3 = lastHue + Math.min(Math.max(difference, -0.5f), 0.5f);
-                lastHue = newhue0;
-                
-                float [] hues = new float [] {};
-                switch (width) {
-                    case 1:
-                        hues = new float [] {newhue3};
-                        break;
-                    case 3:
-                        hues = new float [] {newhue1, newhue3, newhue1};
-                        break;
-                    case 5:
-                        hues = new float [] {newhue1, newhue2, newhue3, newhue2, newhue1};
-                        break;
-                    case 7:
-                        hues = new float [] {newhue0, newhue1, newhue2, newhue3, newhue2, newhue1, newhue0};
-                        break;
-                    default:
-                        hues = new float [] {};
-                        break;
+        @Override
+        public void process(SoundProcessingManager spm, boolean isFirstInChain) {
+            boolean _enabled;
+            synchronized (sync) {
+                _enabled = enabled;
+            }
+            if (_enabled) {
+                float pitch = 0;
+                float mostProbablePitch = 0;
+                float maxProbability = -10f;
+                for (Object res_ : PitchProcessor.getInstance().getResults()) {
+                    PitchProcessor.Result result = (PitchProcessor.Result) res_;
+                    if (result.pitch > 0) {
+                        if (result.pitchProbability > maxProbability) {
+                            mostProbablePitch = result.pitch;
+                            maxProbability = result.pitchProbability;
+                        }
+                    }
                 }
-                
-                
+                pitch = mostProbablePitch;
+                //TODO: SUM(probability*pitch)/SUM(probability)
 
-                
-                DeviceGroup group = deviceGroupRef.get();
-                if(group != null) {
-                   RGBDevice [] rgbDevices = Arrays.stream(group.getDevices()).sequential()
-                           .filter(d -> d instanceof RGBDevice)
-                           .map(d -> (RGBDevice) d)
-                           .toArray(RGBDevice[]::new);
-                   for(int i = 0;i < hues.length;i++) {
-                       if(rgbDevices.length > i) {
-                           rgbDevices[i].setColor(Color.getHSBColor(hues[i], 1f, 1f));
-                       }
-                   }
-                }
+                if (pitch > 0) {
+                    float hue = (float) SpectrogramPanel.frequencyToBin(pitch, 1000) / 1000f;
+                    float difference = hue - lastHue;
+                    float newhue0 = lastHue + Math.min(Math.max(difference, -0.01f), 0.01f);
+                    float newhue1 = lastHue + Math.min(Math.max(difference, -0.04f), 0.04f);
+                    float newhue2 = lastHue + Math.min(Math.max(difference, -0.3f), 0.3f);
+                    float newhue3 = lastHue + Math.min(Math.max(difference, -0.5f), 0.5f);
+                    lastHue = newhue0;
 
-                LatentSpectrogramEffectPanel panel = myPanelRef.get();
-                if (panel != null) {
-                    panel.setPitch(Color.getHSBColor(newhue3, 1f, 1f), pitch);
+                    float[] hues = new float[]{};
+                    switch (width) {
+                        case 1:
+                            hues = new float[]{newhue3};
+                            break;
+                        case 3:
+                            hues = new float[]{newhue1, newhue3, newhue1};
+                            break;
+                        case 5:
+                            hues = new float[]{newhue1, newhue2, newhue3, newhue2, newhue1};
+                            break;
+                        case 7:
+                            hues = new float[]{newhue0, newhue1, newhue2, newhue3, newhue2, newhue1, newhue0};
+                            break;
+                        default:
+                            hues = new float[]{};
+                            break;
+                    }
+
+                    RGBDevice[] rgbDevices = Arrays.stream(deviceGroup.getDevices()).sequential()
+                            .filter(d -> d instanceof RGBDevice)
+                            .map(d -> (RGBDevice) d)
+                            .toArray(RGBDevice[]::new);
+                    for (int i = 0; i < hues.length; i++) {
+                        if (rgbDevices.length > i) {
+                            rgbDevices[i].setColor(Color.getHSBColor(hues[i], 1f, 1f));
+                        }
+                    }
+
+                    LatentSpectrogramEffectPanel panel = myPanelRef.get();
+                    if (panel != null) {
+                        panel.setPitch(Color.getHSBColor(newhue3, 1f, 1f), pitch);
+                    }
                 }
             }
+        }
 
+        @Override
+        public void setEnabled(boolean enabled) {
+            synchronized (sync) {
+                LatentSpectrogramEffect.this.enabled = enabled;
+            }
+        }
+
+        @Override
+        public boolean isEnabled() {
+            synchronized (sync) {
+                return enabled;
+            }
         }
     }
 

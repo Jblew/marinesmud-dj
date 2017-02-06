@@ -45,4 +45,11 @@ public class ConfigLoader {
             return defConfig;
         }
     }
+    
+    public static void save(Config config) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        File configFile = new File(StaticConfig.CONFIG_PATH);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(configFile, config);
+    }
 }

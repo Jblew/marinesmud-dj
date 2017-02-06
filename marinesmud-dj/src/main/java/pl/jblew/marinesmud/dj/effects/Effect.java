@@ -21,8 +21,8 @@ public interface Effect {
     public String getName();
     @JsonIgnore
     public Processor [] getRequiredProcessors();
-    public EffectWorker newWorker(DeviceGroup initialDeviceGroup);
-    
+    public EffectWorker newWorker(DeviceGroup deviceGroup);
     @Override
     public String toString();
+    public Effect deriveEffect();
 }

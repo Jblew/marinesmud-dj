@@ -2,3 +2,5 @@
 /marinesmud-dj/target
 /marinesmud-dj/target/*
 /marinesmud-dj/config.json
+/serialio/target/
+/serialio

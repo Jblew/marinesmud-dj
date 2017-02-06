@@ -7,6 +7,7 @@ package pl.jblew.marinesmud.dj.effects;
 
 import pl.jblew.marinesmud.dj.gui.EffectPanel;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
+import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
 
 /**
  *
@@ -14,8 +15,10 @@ import pl.jblew.marinesmud.dj.scene.DeviceGroup;
  */
 public abstract class EffectWorker {
     public abstract Effect getEffect();
-    public abstract void init();
-    public abstract void stop();
-    public abstract void setDeviceGroup(DeviceGroup group);
+    public abstract void reload();
+    public abstract void process(SoundProcessingManager spm, boolean isFirstInChain);
+    public abstract void setEnabled(boolean enabled);
+    public abstract boolean isEnabled();
     public abstract EffectPanel createEffectPanel();
+    
 }

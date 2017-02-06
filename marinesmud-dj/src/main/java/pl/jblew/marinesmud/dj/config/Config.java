@@ -5,6 +5,9 @@
  */
 package pl.jblew.marinesmud.dj.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import pl.jblew.marinesmud.dj.scene.Scene;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 
 /**
@@ -12,7 +15,11 @@ import pl.jblew.marinesmud.dj.scene.SceneSetup;
  * @author teofil
  */
 public class Config {
-    public SceneSetup [] setups = new SceneSetup[] {
-        new SceneSetup()
-    };
+    public Scene scene = new Scene();
+    
+    public List<SceneSetup> setups = new ArrayList<SceneSetup>();
+    
+    {
+        setups.add(new SceneSetup());
+    }
 }

@@ -28,7 +28,7 @@ public class AddEffectPanel extends JPanel {
         this.listener = listener;
         
         this.setLayout(new BorderLayout());
-        this.setBorder(BorderFactory.createCompoundBorder(new TitledBorder("Add new effect"), new EmptyBorder(40,40,40,40)));
+        this.setBorder(new EmptyBorder(40,40,40,40));
         
         addButton = new JButton("Add new effect to chain", IconFontSwing.buildIcon(GoogleMaterialDesignIcons.ADD_CIRCLE_OUTLINE, 60, Color.GREEN.darker()));
         addButton.setHorizontalTextPosition(JButton.CENTER);

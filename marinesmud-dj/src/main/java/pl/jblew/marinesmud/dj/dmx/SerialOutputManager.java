@@ -31,13 +31,14 @@ import pl.jblew.marinesmud.dj.config.Config;
 import static pl.jblew.marinesmud.dj.dmx.SingleByteCommunication.CMD_LED_OFF;
 import static pl.jblew.marinesmud.dj.dmx.SingleByteCommunication.CMD_LED_ON;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
+import pl.jblew.marinesmud.dj.scene.Scene;
 
 /**
  *
  * @author teofil
  */
 public class SerialOutputManager implements OutputManager {
-    private final Config config;
+    private final Scene scene;
     private final ClockWorker clock;
     private final PortChangeListener portChangeListener;
     private final AtomicReference<SerialPort> deviceRef = new AtomicReference<>(null);
@@ -45,9 +46,9 @@ public class SerialOutputManager implements OutputManager {
     private final Condition outputBufferEmptyCondition = outputLock.newCondition();
     private final AtomicBoolean outputBufferEmpty = new AtomicBoolean(true);
 
-    public SerialOutputManager(ClockWorker clock, Config config) {
+    public SerialOutputManager(ClockWorker clock, Scene scene) {
         this.clock = clock;
-        this.config = config;
+        this.scene = scene;
         portChangeListener = (String newPortName) -> changeDevice(newPortName);
 
         clock.setDMXTask(() -> sendDMXSync());
@@ -228,12 +229,13 @@ public class SerialOutputManager implements OutputManager {
             //System.out.println("Starting sending DMX... (thread=" + Thread.currentThread().getName() + ")");
             long sTime = System.currentTimeMillis();
 
-            byte[] data = new byte[config.setups[0].getMaxAddr()+1];
+            byte[] data = new byte[scene.getMaxAddr()+1];
             
-            for(DMXDevice d : config.setups[0].devices) {
+            for(DMXDevice d : scene.devices) {
                 byte [] values = d.calculateLevels();
                 for(int i = 0;i < d.getChannelCount();i++) {
                     if(values.length > i) data[d.getStartAddress()+i] = values[i];
+                    //if(values[i] > 0) System.out.println("data["+(d.getStartAddress()+i)+"] = "+values[i]);
                 }
             }
 

@@ -7,34 +7,29 @@ package pl.jblew.marinesmud.dj.scene.devices;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import jiconfont.IconCode;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
-import pl.jblew.marinesmud.dj.scene.DimmableDevice;
 import pl.jblew.marinesmud.dj.gui.util.GUIUtil;
-import pl.jblew.marinesmud.dj.scene.RGBDevice;
 
 /**
  *
  * @author teofil
  */
-public class SingleDimmer implements DMXDevice, DimmableDevice {
+public class SingleDimmer extends DMXDevice {
     public String name;
     public int address;
     public int min = 0;
     public int max = 255;
     
     @JsonIgnore
-    public final AtomicReference<Float> valueRef = new AtomicReference<>(0f);
-    
+    public final Object sync = new Object();
     @JsonIgnore
-    public final AtomicReference<Color> currentColorRef = new AtomicReference<>(Color.BLACK);
+    public float [] levels = new float [] {0f};
     @JsonIgnore
     public final AtomicReference<JPanel> componentRef = new AtomicReference<>(null);
     
@@ -59,6 +54,12 @@ public class SingleDimmer implements DMXDevice, DimmableDevice {
     public int getChannelCount() {
         return 1;
     }
+    
+    @Override
+    @JsonIgnore
+    public int getLevelsCount() {
+        return 1;
+    }
 
     @Override
     public String getName() {
@@ -66,11 +67,11 @@ public class SingleDimmer implements DMXDevice, DimmableDevice {
     }
 
     @Override
-    public JComponent newComponent() {
+    public JComponent newPreviewComponent() {
         GUIUtil.assertEDTThread();
         
         JPanel panel = new JPanel();
-        panel.setBackground(currentColorRef.get());
+        panel.setBackground(Color.BLACK);
         panel.setPreferredSize(new Dimension(48, 48));
         componentRef.set(panel);
         return panel;
@@ -78,24 +79,50 @@ public class SingleDimmer implements DMXDevice, DimmableDevice {
 
     @Override
     public byte[] calculateLevels() {
-        float f = valueRef.get();
-        return new byte [] {(byte)(int)(f*255f)};
+        synchronized(sync) {
+            return new byte [] {(byte)(int)(levels[0]*255f)};
+        }
     }
 
     @Override
-    public void setMasterGain(float level) {
-        
-    }
-
-    @Override
-    public void setCommonLevel(float level) {
-        valueRef.set(level);
-    }
-
-    @Override
+    @JsonIgnore
     public IconCode getIconCode() {
         return GoogleMaterialDesignIcons.COLOR_LENS;
     }
+
+    @Override
+    public void processValues() {
+    }
+
+    @Override
+    public void updatePreview() {
+        GUIUtil.assertEDTThread();
+        JPanel panel = componentRef.get();
+        if(panel != null) {
+            synchronized(sync) {
+            panel.setBackground(new Color(levels[0],levels[0], levels[0]));
+            }
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    public float[] getLevels() {
+        synchronized(sync) {
+            return levels;
+        }
+    }
+
+    @Override
+    public void setLevels(float[] levels) {
+        synchronized(this.sync) {
+            this.levels = levels;
+        }
+    }
     
-    
+    @Override
+    @JsonIgnore
+    public Object getSync() {
+        return sync;
+    }
 }

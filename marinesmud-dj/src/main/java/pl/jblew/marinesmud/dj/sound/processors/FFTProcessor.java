@@ -9,6 +9,9 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.util.fft.FFT;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import pl.jblew.marinesmud.dj.config.StaticConfig;
 import pl.jblew.marinesmud.dj.util.Listener;
 import pl.jblew.marinesmud.dj.util.ListenersManager;
@@ -19,15 +22,14 @@ import pl.jblew.marinesmud.dj.util.ListenersManager;
  */
 public class FFTProcessor implements AudioProcessor, Processor {
     private static final FFTProcessor INSTANCE = new FFTProcessor();
-    private final ListenersManager listenersManager = new ListenersManager();
+    private final List<Object> results = Collections.synchronizedList(new LinkedList<>());
+    //private final ListenersManager listenersManager = new ListenersManager();
 
     private final int bufferSize = StaticConfig.BUFFER_SIZE;
     private final FFT fft;
-    private final float[] amplitudes;
 
     private FFTProcessor() {
         fft = new FFT(bufferSize);
-        amplitudes = new float[bufferSize / 2];
     }
 
     public static FFTProcessor getInstance() {
@@ -36,13 +38,15 @@ public class FFTProcessor implements AudioProcessor, Processor {
 
     @Override
     public boolean process(AudioEvent audioEvent) {
+        float[] amplitudes = new float[bufferSize / 2];
         float[] audioFloatBuffer = audioEvent.getFloatBuffer();
         float[] transformbuffer = new float[bufferSize * 2];
         System.arraycopy(audioFloatBuffer, 0, transformbuffer, 0, audioFloatBuffer.length);
         fft.forwardTransform(transformbuffer);
         fft.modulus(transformbuffer, amplitudes);
 
-        listenersManager.fireEvent(amplitudes);
+        //System.out.println("results.add amplitudes");
+        results.add(new Result(amplitudes));
         return true;
     }
 
@@ -67,7 +71,7 @@ System.out.println("Stop FFTProcessor");
         return new Processor[]{};
     }
 
-    @Override
+    /*@Override
     public void addListener(Listener l) {
         listenersManager.addListener(l);
     }
@@ -75,5 +79,33 @@ System.out.println("Stop FFTProcessor");
     @Override
     public void removeListener(Listener l) {
         listenersManager.removeListener(l);
+    }*/
+
+    @Override
+    public Iterable<Object> getResults() {
+        System.out.println("getResults");
+        return results;
+    }
+    
+    public int getResultCount() {
+        return results.size();
+    }
+
+    @Override
+    public void clearResults() {
+        System.out.println("clear results");
+        results.clear();
+    }
+
+    @Override
+    public void process() {
+    }
+    
+    public static class Result {
+        public final float [] amplitudes;
+        
+        public Result(float [] amplitudes) {
+            this.amplitudes = amplitudes;
+        }
     }
 }

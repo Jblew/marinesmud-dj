@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import pl.jblew.marinesmud.dj.effects.Effect;
+import pl.jblew.marinesmud.dj.effects.EffectWorker;
+import pl.jblew.marinesmud.dj.gui.util.GUIUtil;
+import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
 
 /**
  *
@@ -22,7 +25,7 @@ public class DeviceGroup {
     private final DMXDevice [] devices;
     private final AtomicBoolean enabled = new AtomicBoolean (true);
     private final AtomicInteger priority = new AtomicInteger(10);
-    private final List<Effect> effects = Collections.synchronizedList(new LinkedList<>());
+    private final List<EffectWorker> effects = Collections.synchronizedList(new LinkedList<>());
     
 
     public DeviceGroup(String name, DMXDevice[] devices) {
@@ -59,6 +62,33 @@ public class DeviceGroup {
         return name + " (" + devices.length + ')';
     }
     
+    public void initEffects(SoundProcessingManager spm) {
+        for(EffectWorker ew : effects) spm.registerEffectWorker(ew);
+    }
+    
+    public void stopEffects(SoundProcessingManager spm) {
+        for(EffectWorker ew : effects) spm.unregisterEffectWorker(ew);
+    }
+    
+    public Iterable<EffectWorker> getEffectWorkers() {
+        return effects;
+    }
+
+    public void processEffects(SoundProcessingManager spm) {
+        boolean isFirstEffect = true;
+        for(EffectWorker ew : effects) {
+            ew.process(spm, isFirstEffect);
+            isFirstEffect = false;
+        }
+    }
+
+    public void processVisualisations() {
+        GUIUtil.assertEDTThread();
+        for(DMXDevice d : devices) {
+            d.updatePreview();
+        }
+    }    
+    
     public static class Serializator {
         public String name = "";
         public String [] devices = new String [] {};
@@ -87,7 +117,7 @@ public class DeviceGroup {
                 
                 DeviceGroup group = new DeviceGroup(this.name, devicesInGroup.toArray(new DMXDevice [] {}));
                 
-                group.effects.addAll(Arrays.asList(effects));
+                Arrays.stream(effects).sequential().map(e -> e.newWorker(group)).forEach(ew -> group.effects.add(ew));
                 
                 group.setEnabled(enabled);
                 group.setPriority(priority);

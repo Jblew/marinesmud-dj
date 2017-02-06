@@ -35,7 +35,7 @@ public class ScenePanel extends JPanel {
             groupRow.add(label);
             
             for(DMXDevice device : group.getDevices()) {
-                groupRow.add(device.newComponent());
+                groupRow.add(device.newPreviewComponent());
             }
             
             this.add(groupRow);
