@@ -13,6 +13,7 @@ import pl.jblew.marinesmud.dj.effects.BalanceCorrectionEffect;
 import pl.jblew.marinesmud.dj.effects.Effect;
 import pl.jblew.marinesmud.dj.effects.LatentSpectrogramEffect;
 import pl.jblew.marinesmud.dj.effects.PitchPreview;
+import pl.jblew.marinesmud.dj.effects.RelayToggler;
 import pl.jblew.marinesmud.dj.effects.StaticSliderEffect;
 import pl.jblew.marinesmud.dj.scene.devices.SingleDimmer;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
@@ -39,12 +40,17 @@ public class SceneSetup {
             new BalanceCorrectionEffect()
         };
 
-        DeviceGroup.Serializator s_DemoBar = new DeviceGroup.Serializator("DemoBar", new String[]{"demo_dimmer_1", "demo_dimmer_2", "demo_dimmer_3"});
-        s_DemoBar.effects = new Effect[]{
-            new StaticSliderEffect()
+        //DeviceGroup.Serializator s_DemoBar = new DeviceGroup.Serializator("DemoBar", new String[]{"demo_dimmer_1", "demo_dimmer_2", "demo_dimmer_3"});
+        //s_DemoBar.effects = new Effect[]{
+        //    new StaticSliderEffect()
+        //};
+        
+        DeviceGroup.Serializator s_Gniazdka = new DeviceGroup.Serializator("Gniazdka", new String[]{"gniazdko_A", "gniazdko_B", "gniazdko_C", "gniazdko_D"});
+        s_Gniazdka.effects = new Effect[]{
+            new RelayToggler()
         };
 
-        groups = new DeviceGroup.Serializator[]{s_statusGroup, s_podScena, s_DemoBar};
+        groups = new DeviceGroup.Serializator[]{s_statusGroup, s_podScena, s_Gniazdka};
     }
 
     @Override

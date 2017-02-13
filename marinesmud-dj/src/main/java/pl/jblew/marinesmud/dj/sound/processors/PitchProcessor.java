@@ -52,6 +52,9 @@ public class PitchProcessor implements Processor {
     @Override
     public void init(AudioDispatcher dispatcher) {
         dispatcher.addAudioProcessor(new be.tarsos.dsp.pitch.PitchProcessor(PitchEstimationAlgorithm.DYNAMIC_WAVELET, StaticConfig.SAMPLE_RATE, StaticConfig.BUFFER_SIZE, pitchHandler));
+        
+        //dispatcher.addAudioProcessor(new be.tarsos.dsp.pitch.PitchProcessor(PitchEstimationAlgorithm.YIN, StaticConfig.SAMPLE_RATE, StaticConfig.BUFFER_SIZE, pitchHandler));
+        
         //System.out.println("Init PitchProcessor");
     }
 

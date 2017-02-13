@@ -7,6 +7,7 @@ package pl.jblew.marinesmud.dj.scene;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import pl.jblew.marinesmud.dj.scene.devices.LedBar;
+import pl.jblew.marinesmud.dj.scene.devices.Relay;
 import pl.jblew.marinesmud.dj.scene.devices.SingleDimmer;
 
 /**
@@ -22,7 +23,11 @@ public class Scene {
         new LedBar("pod_scena_2", 23),
         new LedBar("pod_scena_3", 26),
         new LedBar("pod_scena_4", 29),
-        new LedBar("pod_scena_5", 32)
+        new LedBar("pod_scena_5", 32),
+        new Relay("gniazdko_A", 50),
+        new Relay("gniazdko_B", 51),
+        new Relay("gniazdko_C", 52),
+        new Relay("gniazdko_D", 53),
 
     };
 

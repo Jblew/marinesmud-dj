@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import pl.jblew.marinesmud.dj.gui.EffectPanel;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
@@ -28,21 +29,21 @@ import pl.jblew.marinesmud.dj.util.Listener;
  *
  * @author teofil
  */
-public class BalanceCorrectionEffect implements Effect {
+public class RelayToggler implements Effect {
     public boolean enabled = true;
-    public float[] knobs = null;
+    public boolean[] states = new boolean[0];
 
     @JsonIgnore
     private final Object sync = new Object();
 
-    public BalanceCorrectionEffect() {
+    public RelayToggler() {
 
     }
 
     @Override
     @JsonIgnore
     public String getName() {
-        return "Balance correction";
+        return "Relay toggler";
     }
 
     @Override
@@ -62,11 +63,11 @@ public class BalanceCorrectionEffect implements Effect {
     }
 
     @Override
-    public BalanceCorrectionEffect deriveEffect() {
+    public RelayToggler deriveEffect() {
         synchronized (sync) {
-            BalanceCorrectionEffect clone = new BalanceCorrectionEffect();
+            RelayToggler clone = new RelayToggler();
             clone.enabled = this.enabled;
-            clone.knobs = this.knobs;
+            clone.states = this.states;
             return clone;
         }
     }
@@ -78,18 +79,17 @@ public class BalanceCorrectionEffect implements Effect {
         public MyWorker(DeviceGroup deviceGroup) {
             this.deviceGroup = deviceGroup;
 
-            int numOfKnobs = Arrays.stream(deviceGroup.getDevices()).mapToInt(d -> d.getLevelsCount()).max().orElse(0);
+            int numOfKnobs = deviceGroup.getDevices().length;
 
             synchronized (sync) {
-                if (knobs == null) {
-                    knobs = new float[numOfKnobs];
-                    for(int i = 0;i < numOfKnobs;i++) knobs[i] = 1f;
-                } else if (knobs.length < numOfKnobs) {
-                    float[] newknobs = new float[numOfKnobs];
+                if (states == null) {
+                    states = new boolean[numOfKnobs];
+                } else if (states.length < numOfKnobs) {
+                    boolean[] newstates = new boolean[numOfKnobs];
                     for (int i = 0; i < numOfKnobs; i++) {
-                        newknobs[i] = (i < knobs.length ? knobs[i] : 1f);
+                        newstates[i] = (i < states.length ? states[i] : false);
                     }
-                    knobs = newknobs;
+                    states = newstates;
                 }
             }
         }
@@ -100,53 +100,57 @@ public class BalanceCorrectionEffect implements Effect {
 
         @Override
         public Effect getEffect() {
-            return BalanceCorrectionEffect.this;
+            return RelayToggler.this;
         }
 
         @Override
         public EffectPanel createEffectPanel() {
-            MyEffectPanel p = new MyEffectPanel(deviceGroup);
-            myPanelRef.set(p);
-            return p;
+            synchronized (sync) {
+                MyEffectPanel p = new MyEffectPanel(deviceGroup, states);
+                myPanelRef.set(p);
+                return p;
+            }
         }
 
         @Override
         public void process(SoundProcessingManager spm, boolean isFirstInChain) {
             boolean _enabled;
+            boolean[] _states;
             synchronized (sync) {
                 _enabled = enabled;
+                _states = states;
             }
-
             if (_enabled) {
                 MyEffectPanel myPanel = myPanelRef.get();
                 if (myPanel != null) {
+                    DMXDevice[] devices = deviceGroup.getDevices();
+                    for (int i = 0; i < devices.length; i++) {
 
-                    synchronized (sync) {
-                        for (int i = 0; i < knobs.length; i++) {
-                            knobs[i] = (float) myPanel.sliders[i].getValue() / 1000f;
+                        final int index = i;
 
-                            int index = i;
-                            String newLabel = ((int) (knobs[i] * 100f)) + "%";
-                            if (!myPanel.sliderLabels[i].getText().equals(newLabel)) {
-                                SwingUtilities.invokeLater(() -> {
-                                    myPanel.sliderLabels[index].setText(newLabel);
-                                });
-                            }
+                        _states[i] = myPanel.togglers[i].isSelected();
+
+                        devices[i].setCommonLevel(_states[i] ? 1f : 0f);
+
+                        String newLabel = (_states[i] ? "ON" : "OFF");
+                        if (!myPanel.togglers[i].getText().equals(newLabel)) {
+                            SwingUtilities.invokeLater(() -> {
+                                myPanel.togglers[index].setText(newLabel);
+                            });
                         }
 
-                        DMXDevice[] devices = deviceGroup.getDevices();
-                        for (int i = 0; i < devices.length; i++) {
-                            devices[i].multiplyLevels(knobs);
-                        }
                     }
                 }
+            }
+            synchronized (sync) {
+                states = _states;
             }
         }
 
         @Override
         public void setEnabled(boolean enabled) {
             synchronized (sync) {
-                BalanceCorrectionEffect.this.enabled = enabled;
+                RelayToggler.this.enabled = enabled;
             }
         }
 
@@ -159,22 +163,28 @@ public class BalanceCorrectionEffect implements Effect {
 
     }
 
-    private class MyEffectPanel extends EffectPanel {
-        private final JSlider[] sliders;
-        private final JLabel[] sliderLabels;
+    private static class MyEffectPanel extends EffectPanel {
+        private final JToggleButton[] togglers;
+        private final JLabel[] togglerLabels;
 
-        public MyEffectPanel(DeviceGroup deviceGroup) {
+        public MyEffectPanel(DeviceGroup deviceGroup, boolean[] states) {
             setLayout(new GridLayout(0, 2));
 
-            sliders = new JSlider[knobs.length];
-            sliderLabels = new JLabel[sliders.length];
+            DMXDevice[] devices = deviceGroup.getDevices();
+            togglers = new JToggleButton[devices.length];
+            togglerLabels = new JLabel[togglers.length];
 
-            for (int i = 0; i < sliders.length; i++) {
-                sliders[i] = new JSlider(100, 1000, (int) (knobs[i] * 1000f));
-                sliderLabels[i] = new JLabel("Waiting for");
+            char letter = 'A';
+            for (int i = 0; i < togglers.length; i++) {
+                togglers[i] = new JToggleButton("OFF");
+                togglerLabels[i] = new JLabel("CHAN_" + (letter + i));
 
-                this.add(sliderLabels[i]);
-                this.add(sliders[i]);
+                if (i < states.length) {
+                    togglers[i].setSelected(states[i]);
+                }
+
+                this.add(togglerLabels[i]);
+                this.add(togglers[i]);
             }
         }
     }

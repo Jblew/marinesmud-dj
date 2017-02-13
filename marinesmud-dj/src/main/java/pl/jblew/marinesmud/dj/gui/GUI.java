@@ -62,6 +62,7 @@ public class GUI {
             public void windowClosing(WindowEvent we) {
                 try {
                     ConfigLoader.save(config);
+                    System.out.println("Config saved!");
                 } catch (IOException ex) {
                     System.out.println(ex);
                 }

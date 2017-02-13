@@ -1,6 +1,5 @@
 package pl.jblew.marinesmud.dj;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,24 +7,13 @@ import javax.swing.SwingUtilities;
 import pl.jblew.marinesmud.dj.clock.ClockWorker;
 import pl.jblew.marinesmud.dj.config.Config;
 import pl.jblew.marinesmud.dj.config.ConfigLoader;
-import pl.jblew.marinesmud.dj.dmx.SerialOutputManager;
 import pl.jblew.marinesmud.dj.dmx.OutputManager;
 import pl.jblew.marinesmud.dj.dmx.SerialOutputManager;
 import pl.jblew.marinesmud.dj.effects.PreconfiguredEffects;
-import pl.jblew.marinesmud.dj.effects.EmptyEffect;
-import pl.jblew.marinesmud.dj.effects.LatentSpectrogramEffect;
-import pl.jblew.marinesmud.dj.effects.PitchPreview;
-import pl.jblew.marinesmud.dj.effects.SpectrogramPreview;
 import pl.jblew.marinesmud.dj.gui.GUI;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
-import gnu.io.RXTXCommDriver;
-import java.awt.Color;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.swing.JSlider;
-import pl.jblew.marinesmud.dj.effects.StaticSliderEffect;
-import pl.jblew.marinesmud.dj.scene.DMXDevice;
-import pl.jblew.marinesmud.dj.scene.RGBDevice;
 
 /**
  * Hello world!

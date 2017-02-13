@@ -119,7 +119,23 @@ public class Test {
         byte l2 = (byte)((dmxFrame.length >> 8) & 0xFF);
         System.out.println(l1+" "+l2);*/
         
-        IconFontSwing.buildImage(GoogleMaterialDesignIcons.ANDROID, 60, Color.RED.darker());
+       // IconFontSwing.buildImage(GoogleMaterialDesignIcons.ANDROID, 60, Color.RED.darker());
+       
+       float [] levels = new float [] {0f, 0f, 0f, 0f};
+       
+       
+       byte v = (byte) 0x00;
+       if(levels[0] > 0.5f) v |= 1 << 0;
+       if(levels[1] > 0.5f) v |= 1 << 1;
+       if(levels[2] > 0.5f) v |= 1 << 2;
+       if(levels[3] > 0.5f) v |= 1 << 3;
+       
+       boolean a =  (v & (1 << 0)) != 0;
+       boolean b =  (v & (1 << 1)) != 0;
+       boolean c =  (v & (1 << 2)) != 0;
+       boolean d =  (v & (1 << 3)) != 0;
+       
+        System.out.println(""+(a? "A": ".")+(b? "B": ".")+(c? "C": ".")+(d? "D": "."));
     }
 }
 //{"device":"/dev/tty.usbmodem1411","channels":[255,123,20,30,23,210,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}
