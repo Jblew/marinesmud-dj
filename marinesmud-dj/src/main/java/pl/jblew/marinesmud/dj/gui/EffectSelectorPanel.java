@@ -23,6 +23,7 @@ import jiconfont.swing.IconFontSwing;
 import pl.jblew.marinesmud.dj.effects.Effect;
 import pl.jblew.marinesmud.dj.effects.EffectWorker;
 import pl.jblew.marinesmud.dj.effects.PreconfiguredEffects;
+import pl.jblew.marinesmud.dj.gui.util.FocusableJPanel;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
@@ -31,7 +32,7 @@ import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
  *
  * @author teofil
  */
-public class EffectSelectorPanel extends JPanel {
+public class EffectSelectorPanel extends FocusableJPanel {
     private final DeviceGroup deviceGroup;
     private final SoundProcessingManager spm;
     private final PreconfiguredEffects effects;
@@ -75,7 +76,7 @@ public class EffectSelectorPanel extends JPanel {
         });
         northPanel.add(closeButton, BorderLayout.EAST);*/
         //this.add(northPanel, BorderLayout.NORTH);
-        JPanel southPanel = new JPanel(new BorderLayout());
+        JPanel southPanel = new FocusableJPanel(new BorderLayout());
         southPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         JCheckBox enableButton = new JCheckBox("Enabled");
         enableButton.setForeground(Color.WHITE);

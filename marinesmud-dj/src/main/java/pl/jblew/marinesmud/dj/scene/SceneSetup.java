@@ -15,6 +15,7 @@ import pl.jblew.marinesmud.dj.effects.LatentSpectrogramEffect;
 import pl.jblew.marinesmud.dj.effects.PitchPreview;
 import pl.jblew.marinesmud.dj.effects.RelayToggler;
 import pl.jblew.marinesmud.dj.effects.StaticSliderEffect;
+import pl.jblew.marinesmud.dj.effects.StrobeEffect;
 import pl.jblew.marinesmud.dj.scene.devices.SingleDimmer;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
 
@@ -37,9 +38,9 @@ public class SceneSetup {
         s_podScena.effects = new Effect[]{
             new StaticSliderEffect(),
             new LatentSpectrogramEffect(5),
+            new StrobeEffect(),
             new BalanceCorrectionEffect()
         };
-
         //DeviceGroup.Serializator s_DemoBar = new DeviceGroup.Serializator("DemoBar", new String[]{"demo_dimmer_1", "demo_dimmer_2", "demo_dimmer_3"});
         //s_DemoBar.effects = new Effect[]{
         //    new StaticSliderEffect()

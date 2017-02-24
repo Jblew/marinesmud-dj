@@ -29,6 +29,9 @@ public class PreconfiguredEffects implements Iterable<Effect> {
         this.registerEffect(new BalanceCorrectionEffect());
         this.registerEffect(new RomanticColorWheel());
         this.registerEffect(new StaticColor());
+        this.registerEffect(new StrobeEffect());
+        this.registerEffect(new BeatSpiker());
+        this.registerEffect(new KeyboardSpiker());
     }
         
     private  void registerEffect(Effect effect) {

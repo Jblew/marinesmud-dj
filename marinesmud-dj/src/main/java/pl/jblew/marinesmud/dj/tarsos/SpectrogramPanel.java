@@ -52,9 +52,8 @@ public class SpectrogramPanel extends JComponent implements ComponentListener {
         this.addComponentListener(this);
     }
 
-    public static int frequencyToBin(final double frequency, int height) {
-        final double minFrequency = 50; // Hz
-        final double maxFrequency = 11000; // Hz
+    public static int frequencyToBin(final double frequency, int height, double minFrequency, double maxFrequency) {
+        
         int bin = 0;
         final boolean logaritmic = true;
         if (frequency != 0 && frequency > minFrequency && frequency < maxFrequency) {
@@ -67,9 +66,9 @@ public class SpectrogramPanel extends JComponent implements ComponentListener {
             } else {
                 binEstimate = (frequency - minFrequency) / maxFrequency * height;
             }
-            if (binEstimate > 700) {
-                System.out.println(binEstimate + "");
-            }
+            //if (binEstimate > 700) {
+            //    System.out.println(binEstimate + "");
+            //}
             bin = height - 1 - (int) binEstimate;
         }
         return bin;
@@ -87,7 +86,7 @@ public class SpectrogramPanel extends JComponent implements ComponentListener {
         float[] pixeledAmplitudes = new float[getHeight()];
         //iterate the lage arrray and map to pixels
         for (int i = amplitudes.length / 800; i < amplitudes.length; i++) {
-            int pixelY = frequencyToBin(i * 44100 / (amplitudes.length * 8), getHeight());
+            int pixelY = frequencyToBin(i * 44100 / (amplitudes.length * 8), getHeight(), 50, 1100);
             pixeledAmplitudes[pixelY] += amplitudes[i];
             maxAmplitude = Math.max(pixeledAmplitudes[pixelY], maxAmplitude);
         }
@@ -113,7 +112,7 @@ public class SpectrogramPanel extends JComponent implements ComponentListener {
         yellow_last_y = val;
 
         if (pitch != -1) {
-            int pitchIndex = frequencyToBin(pitch, getHeight());
+            int pitchIndex = frequencyToBin(pitch, getHeight(), 50, 1100);
             bufferedGraphics.setColor(Color.RED);
             bufferedGraphics.fillRect(position, pitchIndex, 1, 1);
             currentPitch = new StringBuilder("Current frequency: ").append((int) pitch).append("Hz").toString();
@@ -124,17 +123,17 @@ public class SpectrogramPanel extends JComponent implements ComponentListener {
         bufferedGraphics.drawString(currentPitch, 20, 20);
 
         for (int i = 100; i < 500; i += 100) {
-            int bin = frequencyToBin(i, getHeight());
+            int bin = frequencyToBin(i, getHeight(), 50, 1100);
             bufferedGraphics.drawLine(0, bin, 5, bin);
         }
 
         for (int i = 500; i <= 20000; i += 500) {
-            int bin = frequencyToBin(i, getHeight());
+            int bin = frequencyToBin(i, getHeight(), 50, 1100);
             bufferedGraphics.drawLine(0, bin, 5, bin);
         }
 
         for (int i = 100; i <= 20000; i *= 10) {
-            int bin = frequencyToBin(i, getHeight());
+            int bin = frequencyToBin(i, getHeight(), 50, 1100);
             bufferedGraphics.drawString(String.valueOf(i), 10, bin);
         }
         

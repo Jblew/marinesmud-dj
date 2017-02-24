@@ -10,6 +10,7 @@ import com.ftdi.FTDevice;
 import com.ftdi.Parity;
 import com.ftdi.StopBits;
 import com.ftdi.WordLength;*/
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,11 +20,18 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
+import org.openide.util.Exceptions;
 import pl.jblew.marinesmud.dj.dmx.SingleByteCommunication;
 
 /**
@@ -32,7 +40,7 @@ import pl.jblew.marinesmud.dj.dmx.SingleByteCommunication;
  */
 public class Test {
     public static void main(String... args) throws UnsupportedEncodingException {
-        
+
         /*try {
             List<FTDevice> fTDevices;
             fTDevices = FTDevice.getDevices(true);
@@ -55,7 +63,7 @@ public class Test {
         } catch (FTD2XXException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-        /*long sTime = System.currentTimeMillis();
+ /*long sTime = System.currentTimeMillis();
         int [] channels = new int [510];
         channels[1] = 255;
         channels[2] = 255;
@@ -107,21 +115,16 @@ public class Test {
         long eTime = System.currentTimeMillis();
         long intervalMs = (eTime-sTime);
         System.out.println("DMX external send time: "+intervalMs+" ms");*/
-        
-        /*SingleByteCommunication sbc = new SingleByteCommunication();
+ /*SingleByteCommunication sbc = new SingleByteCommunication();
         sbc.initialize();
         sbc.close();
         System.out.println("Done");*/
-        
-
-        /*byte [] dmxFrame = new byte [512];
+ /*byte [] dmxFrame = new byte [512];
         byte l1 = (byte)(dmxFrame.length & 0xFF);
         byte l2 = (byte)((dmxFrame.length >> 8) & 0xFF);
         System.out.println(l1+" "+l2);*/
-        
-       // IconFontSwing.buildImage(GoogleMaterialDesignIcons.ANDROID, 60, Color.RED.darker());
-       
-       float [] levels = new float [] {0f, 0f, 0f, 0f};
+        // IconFontSwing.buildImage(GoogleMaterialDesignIcons.ANDROID, 60, Color.RED.darker());
+        /*float [] levels = new float [] {0f, 0f, 0f, 0f};
        
        
        byte v = (byte) 0x00;
@@ -135,7 +138,47 @@ public class Test {
        boolean c =  (v & (1 << 2)) != 0;
        boolean d =  (v & (1 << 3)) != 0;
        
-        System.out.println(""+(a? "A": ".")+(b? "B": ".")+(c? "C": ".")+(d? "D": "."));
+        System.out.println(""+(a? "A": ".")+(b? "B": ".")+(c? "C": ".")+(d? "D": "."));*/
+ /*String toEncode = "Ahaha";
+       String encoded = Base64.getEncoder().encodeToString(toEncode.getBytes("UTF-8"));
+        System.out.println(encoded);
+         */
+        AtomicInteger sleepTime = new AtomicInteger(100);
+
+        JFrame frame = new JFrame("Strobe");
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JPanel mainPanel = new JPanel();
+
+        frame.getContentPane().setLayout(new BorderLayout());
+        frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+        JSlider speedSlider = new JSlider(1, 127, 5);
+        mainPanel.add(speedSlider);
+
+        frame.pack();
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+        new Thread(() -> {
+            while (true) {
+                SwingUtilities.invokeLater(() -> {
+                    if (mainPanel.getBackground() == Color.BLACK) {
+                        mainPanel.setBackground(Color.WHITE);
+                    } else {
+                        mainPanel.setBackground(Color.BLACK);
+                    }
+                    double reversedPowerFactor = (double)(127-speedSlider.getValue())/128d;
+                    //double timed = 15+;
+                    //sleepTime.set();
+                });
+                try {
+                    TimeUnit.MILLISECONDS.sleep(sleepTime.get());
+                } catch (InterruptedException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+        }).start();
     }
 }
 //{"device":"/dev/tty.usbmodem1411","channels":[255,123,20,30,23,210,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}

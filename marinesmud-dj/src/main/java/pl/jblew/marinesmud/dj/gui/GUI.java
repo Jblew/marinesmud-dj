@@ -9,6 +9,8 @@ import java.awt.BorderLayout;
 import javax.sound.sampled.Mixer;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -84,6 +86,22 @@ public class GUI {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.setTitle("MarinesmudDJ");
         frame.addWindowListener(windowCloseListener);
+        frame.setFocusable(true);
+        frame.setFocusTraversalKeysEnabled(false);
+        frame.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
 
         NorthToolbar toolBar = new NorthToolbar(outputManager, config, app, sceneSetup.getSceneSetup());
 

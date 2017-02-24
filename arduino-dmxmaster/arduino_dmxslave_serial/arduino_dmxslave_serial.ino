@@ -19,20 +19,30 @@
 
 #include <DMXSerial.h>
 
-// Constants for demo program
+#define OUT_G1 3
+#define OUT_R1 5
+#define OUT_B1 6
+#define OUT_B2 9
+#define OUT_R2 10
+#define OUT_G2 11
 
-#define OUT_R 9
-#define OUT_G 10
-#define OUT_B 11
+#define CHAN_R1 38
+#define CHAN_G1 39
+#define CHAN_B1 40
+#define CHAN_R2 41
+#define CHAN_G2 42
+#define CHAN_B2 43
 
-#define CHAN_R 20
-#define CHAN_G 21
-#define CHAN_B 22
+#define RedDefaultLevel1   254
+#define GreenDefaultLevel1 150
+#define BlueDefaultLevel1  5
 
-#define RedDefaultLevel   255
-#define GreenDefaultLevel 253
-#define BlueDefaultLevel  38
+#define RedDefaultLevel2   254
+#define GreenDefaultLevel2 100
+#define BlueDefaultLevel2  10
 
+
+//255,150,5
 void setup () {
   DMXSerial.init(DMXReceiver);
   
@@ -42,32 +52,109 @@ void setup () {
   DMXSerial.write(3, 0);
   
   // enable pwm outputs
-  pinMode(OUT_R,   OUTPUT); // sets the digital pin as output
-  pinMode(OUT_G, OUTPUT);
-  pinMode(OUT_B,  OUTPUT);
+  pinMode(OUT_R1,   OUTPUT);
+  pinMode(OUT_G1, OUTPUT);
+  pinMode(OUT_B1,  OUTPUT);
+  pinMode(OUT_R2,   OUTPUT);
+  pinMode(OUT_G2, OUTPUT);
+  pinMode(OUT_B2,  OUTPUT);
+  analogWrite(OUT_R1,   RedDefaultLevel1);
+  analogWrite(OUT_G1, GreenDefaultLevel1);
+  analogWrite(OUT_B1,  BlueDefaultLevel1);
+  analogWrite(OUT_R2,   RedDefaultLevel2);
+  analogWrite(OUT_G2, GreenDefaultLevel2);
+  analogWrite(OUT_B2,  BlueDefaultLevel2);
   pinMode(13,  OUTPUT);
 }
 
-long l = 0;
+unsigned int r1, r2, g1, g2, b1, b2;
+unsigned int hue1 = 150;
+unsigned int hue2 = 160;
+unsigned long l = 0;
 void loop() {
   // Calculate how long no data backet was received
   unsigned long lastPacket = DMXSerial.noDataSince();
   
-  if (lastPacket < 5000) {
+  if (lastPacket < 2000) {
     // read recent DMX values and set pwm levels 
-    analogWrite(OUT_R,   DMXSerial.read(CHAN_R));
-    analogWrite(OUT_G, DMXSerial.read(CHAN_G));
-    analogWrite(OUT_B,  DMXSerial.read(CHAN_B));  
+    analogWrite(OUT_R1, DMXSerial.read(CHAN_R1));
+    analogWrite(OUT_G1, DMXSerial.read(CHAN_G1));
+    analogWrite(OUT_B1, DMXSerial.read(CHAN_B1));
+    analogWrite(OUT_R2, DMXSerial.read(CHAN_R2));
+    analogWrite(OUT_G2, DMXSerial.read(CHAN_G2));
+    analogWrite(OUT_B2, DMXSerial.read(CHAN_B2));
     digitalWrite(13, LOW);  
   } else {
-    // Show pure red color, when no data was received since 5 seconds or more.
-    analogWrite(OUT_R,   RedDefaultLevel);
-    analogWrite(OUT_G, GreenDefaultLevel);
-    analogWrite(OUT_B,  BlueDefaultLevel);
+    if(l % 500 == 0) {
+      HSBToRGB(hue1, 255, 255, &r1, &g1, &b1);
+      HSBToRGB(hue2, 255, 255, &r2, &g2, &b2);
+      b1 /= 2;
+      b2 /= 2;
+      hue1++;if(hue1 > 255) hue1 = 0;
+      hue2++;if(hue2 > 255) hue2 = 0;
+    }
+    
+    analogWrite(OUT_R1,   r1);
+    analogWrite(OUT_G1, g2);
+    analogWrite(OUT_B1,  b1);
+    analogWrite(OUT_R2,   r2);
+    analogWrite(OUT_G2, g2);
+    analogWrite(OUT_B2,  b2);
     digitalWrite(13, HIGH);
+    l++;
   } // if
 
-  l++;
 }
 
-// End.
+void HSBToRGB(
+    unsigned int inHue, unsigned int inSaturation, unsigned int inBrightness,
+    unsigned int *oR, unsigned int *oG, unsigned int *oB )
+{
+    if (inSaturation == 0)
+    {
+        // achromatic (grey)
+        *oR = *oG = *oB = inBrightness;
+    }
+    else
+    {
+        unsigned int scaledHue = (inHue * 6);
+        unsigned int sector = scaledHue >> 8; // sector 0 to 5 around the color wheel
+        unsigned int offsetInSector = scaledHue - (sector << 8);  // position within the sector         
+        unsigned int p = (inBrightness * ( 255 - inSaturation )) >> 8;
+        unsigned int q = (inBrightness * ( 255 - ((inSaturation * offsetInSector) >> 8) )) >> 8;
+        unsigned int t = (inBrightness * ( 255 - ((inSaturation * ( 255 - offsetInSector )) >> 8) )) >> 8;
+
+        switch( sector ) {
+        case 0:
+            *oR = inBrightness;
+            *oG = t;
+            *oB = p;
+            break;
+        case 1:
+            *oR = q;
+            *oG = inBrightness;
+            *oB = p;
+            break;
+        case 2:
+            *oR = p;
+            *oG = inBrightness;
+            *oB = t;
+            break;
+        case 3:
+            *oR = p;
+            *oG = q;
+            *oB = inBrightness;
+            break;
+        case 4:
+            *oR = t;
+            *oG = p;
+            *oB = inBrightness;
+            break;
+        default:    // case 5:
+            *oR = inBrightness;
+            *oG = p;
+            *oB = q;
+            break;
+        }
+    }
+}

@@ -22,7 +22,9 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import pl.jblew.marinesmud.dj.config.StaticConfig;
+import pl.jblew.marinesmud.dj.effects.visualutil.GradientHue;
 import pl.jblew.marinesmud.dj.gui.EffectPanel;
+import pl.jblew.marinesmud.dj.gui.util.EnumComboBox;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.scene.RGBDevice;
@@ -39,7 +41,7 @@ import pl.jblew.marinesmud.dj.util.Listener;
 public class RomanticColorWheel implements Effect {
     public boolean enabled = true;
     public float speed = 1.0f;
-    public Gradient gradient = Gradient.NATURAL_COLORWHEEL;
+    public GradientHue.Gradient gradient = GradientHue.Gradient.NATURAL_COLORWHEEL;
 
     @JsonIgnore
     private final Object sync = new Object();
@@ -85,16 +87,11 @@ public class RomanticColorWheel implements Effect {
     private class MyWorker extends EffectWorker {
         private final DeviceGroup deviceGroup;
         private final AtomicReference<RomanticColorWheelPanel> myPanelRef = new AtomicReference<>(null);
-        private BufferedImage gradientImg;
+        private final GradientHue gradientHue;
 
         public MyWorker(DeviceGroup deviceGroup) {
             this.deviceGroup = deviceGroup;
-            try {
-                gradientImg = ImageIO.read(RomanticColorWheel.class.getResource(gradient.path));
-                System.out.println("Loaded image "+gradient.path+"; Width="+gradientImg.getWidth());
-            } catch(Exception e) {
-                System.err.println(e);
-            }
+            gradientHue = new GradientHue(gradient);
         }
 
         @Override
@@ -109,7 +106,7 @@ public class RomanticColorWheel implements Effect {
         @Override
         public EffectPanel createEffectPanel() {
             synchronized (sync) {
-                RomanticColorWheelPanel p = new RomanticColorWheelPanel(speed);
+                RomanticColorWheelPanel p = new RomanticColorWheelPanel(speed, RomanticColorWheel.this.gradient);
                 myPanelRef.set(p);
                 return p;
             }
@@ -117,28 +114,13 @@ public class RomanticColorWheel implements Effect {
 
         private float hue = 0;
         private int line = 0;
+
         @Override
         public void process(SoundProcessingManager spm, boolean isFirstInChain) {
-            float speed;
-            boolean _enabled;
-            synchronized (sync) {
-                _enabled = enabled;
-                RomanticColorWheelPanel panel = myPanelRef.get();
-                if (panel != null) {
-                    RomanticColorWheel.this.speed = (float)panel.speedSlider.getValue()/100f;
-                    SwingUtilities.invokeLater(() -> panel.speedLabel.setText("Speed ("+RomanticColorWheel.this.speed+")"));
+            RomanticColorWheelPanel panel = fetchVariablesFromUI();//if disabled, returns null
+            if (panel != null) {
+                Color color = gradientHue.getColor(hue, line);
 
-                }
-                speed = RomanticColorWheel.this.speed;
-            }
-
-            if (_enabled) {
-                Color color = Color.getHSBColor(hue, 1f, 1f);
-                if(gradientImg != null && gradientImg.getWidth() > 0) {
-                    int position = (int)((float)gradientImg.getWidth()*hue);
-                    color = new Color(gradientImg.getRGB(position, line%gradientImg.getHeight()));
-                }
-                
                 RGBDevice[] rgbDevices = Arrays.stream(deviceGroup.getDevices()).sequential()
                         .filter(d -> d instanceof RGBDevice)
                         .map(d -> (RGBDevice) d)
@@ -146,11 +128,10 @@ public class RomanticColorWheel implements Effect {
                 for (RGBDevice d : rgbDevices) {
                     d.setColor(color);
                 }
-                
-                
-                
-                hue += 0.05f*speed/(float)StaticConfig.CLOCK_FREQUENCY_HZ;
-                if(hue > 1f) {
+                synchronized (sync) {
+                    hue += 0.05f * speed / (float) StaticConfig.CLOCK_FREQUENCY_HZ;
+                }
+                if (hue > 1f) {
                     hue -= 1f;
                     line++;
                 }
@@ -170,36 +151,46 @@ public class RomanticColorWheel implements Effect {
                 return enabled;
             }
         }
+
+        private RomanticColorWheelPanel fetchVariablesFromUI() {
+            synchronized (sync) {
+                if (enabled) {
+                    RomanticColorWheelPanel panel = myPanelRef.get();
+                    if (panel != null) {
+                        RomanticColorWheel.this.speed = (float) panel.speedSlider.getValue() / 100f;
+                        SwingUtilities.invokeLater(() -> panel.speedLabel.setText("Speed (" + RomanticColorWheel.this.speed + ")"));
+                        
+                        RomanticColorWheel.this.gradient = panel.gradientSelector.getSelectedEnum();
+                        if(RomanticColorWheel.this.gradient != gradientHue.getGradient()) {
+                            System.out.println("Loading gradient: "+gradient);
+                            gradientHue.loadGradient(gradient);
+                        }
+                        
+                        return panel;
+                    }
+                }
+                return null;
+            }
+        }
     }
 
     private static class RomanticColorWheelPanel extends EffectPanel {
         private final JLabel speedLabel = new JLabel("Speed (0.5)");
         private final JSlider speedSlider = new JSlider(1, 200, 50);
+        private final EnumComboBox<GradientHue.Gradient> gradientSelector;
 
-        public RomanticColorWheelPanel(float initialSpeed) {
-            this.setLayout(new GridLayout(2,2));
-            
-            speedSlider.setValue((int)(initialSpeed*100f));
-            
+        public RomanticColorWheelPanel(float initialSpeed, GradientHue.Gradient initialGradient) {
+            this.setLayout(new GridLayout(2, 2));
+
+            gradientSelector = new EnumComboBox<>(initialGradient);
+
+            speedSlider.setValue((int) (initialSpeed * 100f));
+
             this.add(speedLabel);
             this.add(speedSlider);
-        }
-    }
 
-    public static enum Gradient {
-        HSV(""),
-        COLORFUL("colorful.png"),
-        GROUND("ground.png"),
-        SOFT_PINKS("soft_pinks.png"),
-        MORE_PINKS("more_pinks.png"),
-        WARM("cieple.jpg"),
-        NATURAL_COLORWHEEL("natural.jpg"),
-        ;
-        
-        public final String path;
-        
-        private Gradient(String path) {
-            this.path = path;
+            this.add(new JLabel("Select gradient"));
+            this.add(gradientSelector);
         }
     }
 }

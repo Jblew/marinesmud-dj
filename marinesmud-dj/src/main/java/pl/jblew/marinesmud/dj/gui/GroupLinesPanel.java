@@ -20,6 +20,7 @@ import pl.jblew.marinesmud.dj.effects.EffectWorker;
 import pl.jblew.marinesmud.dj.effects.PreconfiguredEffects;
 import pl.jblew.marinesmud.dj.effects.EmptyEffect;
 import pl.jblew.marinesmud.dj.gui.util.ColoredToggleButton;
+import pl.jblew.marinesmud.dj.gui.util.FocusableJPanel;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
@@ -29,7 +30,7 @@ import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
  *
  * @author teofil
  */
-public class GroupLinesPanel extends JPanel {
+public class GroupLinesPanel extends FocusableJPanel {
     public GroupLinesPanel(PreconfiguredEffects effects, SoundProcessingManager spm, SceneSetup.Current sceneSetup) {
         this.setLayout(new GridLayout(0, 1));
         //this.setLayout(new FlowLayout());
@@ -39,7 +40,7 @@ public class GroupLinesPanel extends JPanel {
         }
     }
 
-    private static class DevicePanel extends JPanel {
+    private static class DevicePanel extends FocusableJPanel {
         private final DeviceGroup group;
 
         public DevicePanel(DeviceGroup group, PreconfiguredEffects effects, SoundProcessingManager spm, SceneSetup.Current sceneSetup) {
@@ -49,7 +50,7 @@ public class GroupLinesPanel extends JPanel {
             this.setLayout(new FlowLayout(FlowLayout.LEFT));
             this.setBackground(Color.DARK_GRAY);
 
-            JPanel labelPanel = new JPanel();
+            JPanel labelPanel = new FocusableJPanel();
             //labelPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
             labelPanel.setLayout(new BorderLayout());
 
@@ -59,7 +60,7 @@ public class GroupLinesPanel extends JPanel {
             labelPanel.add(titleLabel, BorderLayout.NORTH);
 
             int rows = (int) Math.ceil((float) (group.getDevices().length) / 25f) * 5;
-            JPanel previewPanel = new JPanel(new GridLayout(2, 2, 2, 2));
+            JPanel previewPanel = new FocusableJPanel(new GridLayout(2, 2, 2, 2));
             //previewPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
             for (DMXDevice device : group.getDevices()) {
                 JComponent c = device.newPreviewComponent();
@@ -76,7 +77,7 @@ public class GroupLinesPanel extends JPanel {
             labelPanel.add(previewPanel, BorderLayout.CENTER);
 
             //JLabel enableButton = new JLabel("Enabled", IconFontSwing.buildIcon(GoogleMaterialDesignIcons.POWER_SETTINGS_NEW, 24, Color.WHITE), SwingConstants.CENTER);
-            JPanel southPanel = new JPanel(new BorderLayout());
+            JPanel southPanel = new FocusableJPanel(new BorderLayout());
             //southPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
             JCheckBox enableButton = new JCheckBox("Enabled");
             enableButton.setForeground(Color.WHITE);
@@ -89,6 +90,7 @@ public class GroupLinesPanel extends JPanel {
                 enableButton.setText("Disabled");
             }
             enableButton.addActionListener((e) -> {
+                group.setEnabled(enableButton.isSelected());
                 if (enableButton.isSelected()) {
                     southPanel.setBackground(Color.GREEN.darker());
                     enableButton.setText("Enabled");

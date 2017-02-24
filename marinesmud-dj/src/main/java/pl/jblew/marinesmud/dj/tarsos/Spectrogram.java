@@ -258,7 +258,7 @@ public class Spectrogram extends JFrame implements PitchDetectionHandler {
             if(pitch > 0) last_pitch = pitch;
             else usable_pitch = last_pitch;
             
-                float hue = (float) SpectrogramPanel.frequencyToBin(usable_pitch, 1000) / 1000f;
+                float hue = (float) SpectrogramPanel.frequencyToBin(usable_pitch, 1000, 50, 1100) / 1000f;
                 float lasthue = colorophone.getColor(0);
                 float difference = hue - lasthue;
                 float newhue0 = lasthue + Math.min(Math.max(difference, -0.01f), 0.01f);

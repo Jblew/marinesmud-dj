@@ -8,6 +8,7 @@ package pl.jblew.marinesmud.dj.scene.devices;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -25,13 +26,20 @@ public class Relay extends DMXDevice {
     public int address;
     public int min = 0;
     public int max = 255;
+    public int minimalTogglePeriodMs = 300;
     
     @JsonIgnore
-    public final Object sync = new Object();
+    private final Object sync = new Object();
     @JsonIgnore
-    public float [] levels = new float [] {0f};
+    private float [] levels = new float [] {0f};
     @JsonIgnore
-    public final AtomicReference<JPanel> componentRef = new AtomicReference<>(null);
+    private final AtomicReference<JPanel> componentRef = new AtomicReference<>(null);
+    @JsonIgnore
+    private long lastToggledMillis = System.currentTimeMillis();
+    @JsonIgnore
+    private byte desiredState = 0x00;
+    @JsonIgnore
+    private byte currentState = 0x00;
     
     public Relay(String name, int address) {
         this.name = name;
@@ -80,7 +88,15 @@ public class Relay extends DMXDevice {
     @Override
     public byte[] calculateLevels() {
         synchronized(sync) {
-            return new byte [] {(levels[0] > 0.5f)? (byte)0xFF : (byte)0x00};
+            desiredState = (levels[0] > 0.5f)? (byte)0xFF : (byte)0x00;
+            
+            if(desiredState != currentState && System.currentTimeMillis()-lastToggledMillis > minimalTogglePeriodMs) {
+                currentState = desiredState;
+                lastToggledMillis = System.currentTimeMillis();
+            }
+                
+            return new byte [] {currentState};
+            
         }
     }
 
