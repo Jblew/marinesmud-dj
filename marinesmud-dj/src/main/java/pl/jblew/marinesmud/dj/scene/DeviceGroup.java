@@ -113,6 +113,7 @@ public class DeviceGroup {
                             .filter((DMXDevice d) -> d.getName().equals(deviceName))
                             .findFirst().orElse(null);
                     if(device != null) devicesInGroup.add(device);
+                    else System.out.println("Device "+deviceName+" not found!");
                 }
                 
                 DeviceGroup group = new DeviceGroup(this.name, devicesInGroup.toArray(new DMXDevice [] {}));

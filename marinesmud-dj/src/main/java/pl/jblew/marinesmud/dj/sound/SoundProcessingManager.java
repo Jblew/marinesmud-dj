@@ -24,6 +24,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import pl.jblew.marinesmud.dj.clock.ClockWorker;
 import pl.jblew.marinesmud.dj.effects.Effect;
 import pl.jblew.marinesmud.dj.effects.EffectWorker;
+import pl.jblew.marinesmud.dj.projector.ProjectorModule;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.sound.processors.Processor;
@@ -51,6 +52,16 @@ public class SoundProcessingManager {
         };
 
         dispatchAudioTask = () -> {
+            ProjectorModule pm = ProjectorModule.Factory.get();
+            /*if(pm != null) {
+                for(Processor p : pm.getRequiredProcessors()) {
+                    if(!processorChain.contains(p)) {
+                        mixerNeedsUpdate.set(true);
+                        break;
+                    }
+                }
+            }*/
+            
             if (mixerNeedsUpdate.get()) {
                 mixerNeedsUpdate.set(false);
                 if (currentMixerRef.get() != null) {
@@ -104,6 +115,14 @@ public class SoundProcessingManager {
                     resolveProcessorDependencies(requiredProcessor);
                 }
             }
+            
+            /*ProjectorModule pm = ProjectorModule.Factory.get();
+            if(pm != null) {
+                for(Processor p : pm.getRequiredProcessors()) {
+                    resolveProcessorDependencies(p);
+                }
+            }*/
+            
             mixerNeedsUpdate.set(true);
         }
     }

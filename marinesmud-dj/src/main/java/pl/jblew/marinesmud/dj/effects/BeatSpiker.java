@@ -17,7 +17,6 @@ import pl.jblew.marinesmud.dj.scene.DMXDevice;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.scene.RGBDevice;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
-import pl.jblew.marinesmud.dj.sound.processors.OnsetProcessor;
 import pl.jblew.marinesmud.dj.sound.processors.PitchProcessor;
 import pl.jblew.marinesmud.dj.sound.processors.Processor;
 import pl.jblew.marinesmud.dj.tarsos.SpectrogramPanel;
@@ -47,7 +46,7 @@ public class BeatSpiker implements Effect {
 
     @Override
     public Processor[] getRequiredProcessors() {
-        return new Processor[]{OnsetProcessor.getInstance()};
+        return new Processor[]{/*OnsetProcessor.getInstance()*/};
     }
 
     @Override
@@ -97,10 +96,10 @@ public class BeatSpiker implements Effect {
             }
             if (_enabled) {
                 boolean wasOnset = false;
-               for (Object res_ : OnsetProcessor.getInstance().getResults()) {
+                /*for (Object res_ : OnsetProcessor.getInstance().getResults()) {
                     OnsetProcessor.Result result = (OnsetProcessor.Result) res_;
                     wasOnset = true;
-                }
+                }*/
                 
                 for(DMXDevice d : deviceGroup.getDevices()) {
                     d.setCommonLevel((wasOnset? 1f : 0f));

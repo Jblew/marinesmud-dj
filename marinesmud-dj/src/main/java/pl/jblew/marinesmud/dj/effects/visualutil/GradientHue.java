@@ -48,6 +48,7 @@ public final class GradientHue {
     }
 
     public Color getColor(float position, int line) {
+        position = position % 1f;
         synchronized (sync) {
             Color color = Color.getHSBColor(position, 1f, 1f);
             if (gradientImg != null && gradientImg.getWidth() > 0) {
@@ -66,6 +67,7 @@ public final class GradientHue {
 
     public static enum Gradient {
         HSV(""),
+        FORREST("forrest.jpg"),
         COLORFUL("colorful.png"),
         GROUND("ground.png"),
         SOFT_PINKS("soft_pinks.png"),

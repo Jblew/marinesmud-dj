@@ -151,8 +151,14 @@ public class StaticColor implements Effect {
             this.add(selectColorButton);
 
             selectColorButton.addActionListener(evt -> {
-                colorRef.set(JColorChooser.showDialog(this, "Choose RGB color", colorRef.get()));
-                this.setBackground(colorRef.get());
+                //colorRef.set(JColorChooser.showDialog(this, "Choose RGB color", colorRef.get()));
+                JColorChooser cc = new JColorChooser(colorRef.get());
+                cc.getSelectionModel().addChangeListener((changedEvt) -> {
+                    colorRef.set(cc.getColor());
+                    this.setBackground(colorRef.get());
+                });
+                JColorChooser.createDialog(this, "Choose Color", false, cc, (evtOk) -> {}, (evtCancel) -> {}).setVisible(true);
+                //this.setBackground(colorRef.get());
             });
 
             this.setBackground(initialColor);

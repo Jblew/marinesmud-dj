@@ -14,6 +14,7 @@ import java.util.Set;
 /**
  *
  * @author teofil
+ * @param <L>
  */
 public class ListenersManager<L extends Listener> {
     private final Set<L> listeners = new HashSet<>();
@@ -38,7 +39,7 @@ public class ListenersManager<L extends Listener> {
     }
     
     public void fireEvent(Object attachment) {
-        Object [] listenersArray = null;
+        Object [] listenersArray;
         synchronized(lock) {
             listenersArray = listeners.toArray();
         }

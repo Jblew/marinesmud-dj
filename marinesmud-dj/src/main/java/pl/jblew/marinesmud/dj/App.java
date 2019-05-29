@@ -14,12 +14,23 @@ import pl.jblew.marinesmud.dj.gui.GUI;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
 import java.util.concurrent.atomic.AtomicReference;
+import pl.jblew.marinesmud.dj.dmx.RjDMXSerialOutputManager;
+import pl.jblew.marinesmud.dj.projector.ProjectorModule;
 
 /**
  * Hello world!
- *
+ * UWAGA! W katalogu lib/rxtx... plik jnilib jest zmodyfikowany (ten ze strony qbang) nie działa!
  */
 public class App {
+    static {
+        /*try {
+            System.load(System.getProperty("user.dir")+"/rxtx/Mac_OS_X/librxtxSerial.jnilib");
+        } catch (UnsatisfiedLinkError e) {
+            System.err.println("Native code library failed to load.\n" + e);
+            System.exit(1);
+        }*/
+    }
+    
     private final Config config;
     private final SoundProcessingManager spm;
     private final ClockWorker clock;
@@ -37,11 +48,14 @@ public class App {
         this.clock = new ClockWorker();
         this.spm = new SoundProcessingManager();
         this.effects = new PreconfiguredEffects();
-        this.outputManager = new SerialOutputManager(clock, config.scene);
+        this.outputManager = new RjDMXSerialOutputManager(clock, config.scene);//new SerialOutputManager(clock, config.scene);
 
         clock.setTask(ClockWorker.TASK_DISPATCH_AUDIO, spm.getDispatchAudioTask());
         clock.setTask(ClockWorker.TASK_PROCESS_AUDIO, spm.getProcessAudioTask());
         clock.setTask(ClockWorker.TASK_PROCESS_EFFECTS, () -> {
+            ProjectorModule pm = ProjectorModule.Factory.get();
+            if(pm != null) pm.effectsTick();
+            
             SceneSetup.Current currentSceneSetup = currentSceneSetupRef.get();
             if (currentSceneSetup != null) {
                 currentSceneSetup.processEffects(spm);

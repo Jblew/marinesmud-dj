@@ -21,6 +21,7 @@ import pl.jblew.marinesmud.dj.config.StaticConfig;
  *
  * @author teofil
  */
+/*
 public class OnsetProcessor implements Processor {
     private static final OnsetProcessor INSTANCE = new OnsetProcessor();
     private final List<Object> results = Collections.synchronizedList(new LinkedList<>());
@@ -58,10 +59,6 @@ public class OnsetProcessor implements Processor {
         //System.out.println("Init PitchProcessor");
     }
 
-    /*@Override
-    public void stop() {
-System.out.println("Stop FFTProcessor");
-    }*/
     @Override
     public Processor[] getRequiredProcessors() {
         return new Processor[]{};
@@ -91,3 +88,4 @@ System.out.println("Stop FFTProcessor");
         public double salience;
     }
 }
+*/

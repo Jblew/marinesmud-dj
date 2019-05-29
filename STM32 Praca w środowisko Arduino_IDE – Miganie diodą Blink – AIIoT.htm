@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<!-- saved from url=(0070)http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/ -->
+<html lang="pl-PL" class="no-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="http://aiiot.c0.pl/web/xmlrpc.php">
+	<title>STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT</title>
+<link rel="dns-prefetch" href="http://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="AIIoT » Kanał z wpisami" href="http://aiiot.c0.pl/web/feed/">
+<link rel="alternate" type="application/rss+xml" title="AIIoT » Kanał z komentarzami" href="http://aiiot.c0.pl/web/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="AIIoT » STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink Kanał z komentarzami" href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/feed/">
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.3\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.3\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/aiiot.c0.pl\/web\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.8.2"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,56826,8203,55356,56819),0,0),c=j.toDataURL(),b!==c&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55358,56794,8205,9794,65039),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55358,56794,8203,9794,65039),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/wp-emoji-release.min.js" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="llorix-one-companion-style-css" href="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="llorix-one-lite-font-css" href="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/css" type="text/css" media="all">
+<link rel="stylesheet" id="llorix-one-lite-fontawesome-css" href="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/font-awesome.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="llorix-one-lite-bootstrap-style-css" href="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/bootstrap.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="llorix-one-lite-style-css" href="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/style(1).css" type="text/css" media="all">
+<style id="llorix-one-lite-style-inline-css" type="text/css">
+body{ color: #313131}.overlay-layer-wrap{ background:rgba(13, 60, 85, 0.5);}.archive-top .section-overlay-layer{ background:rgba(13, 60, 85, 0.6);}
+</style>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/jquery.js"></script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/jquery-migrate.min.js"></script>
+<link rel="https://api.w.org/" href="http://aiiot.c0.pl/web/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://aiiot.c0.pl/web/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://aiiot.c0.pl/web/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="LEDE/OpenWrt karta WiFi USB (RT5370)" href="http://aiiot.c0.pl/web/2017/05/31/openwrt-karta-wifi-usb-rt5370/">
+<link rel="next" title="Odblokowanie listy aplikacji, Instalacja aplikacji" href="http://aiiot.c0.pl/web/2017/09/22/odblokowanie-listy-aplikacji-instalacja-aplikacji/">
+<meta name="generator" content="WordPress 4.8.2">
+<link rel="canonical" href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/">
+<link rel="shortlink" href="http://aiiot.c0.pl/web/?p=121">
+<link rel="alternate" type="application/json+oembed" href="http://aiiot.c0.pl/web/wp-json/oembed/1.0/embed?url=http%3A%2F%2Faiiot.c0.pl%2Fweb%2F2017%2F09%2F15%2Fstm32-praca-w-srodowisko-arduinoide%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://aiiot.c0.pl/web/wp-json/oembed/1.0/embed?url=http%3A%2F%2Faiiot.c0.pl%2Fweb%2F2017%2F09%2F15%2Fstm32-praca-w-srodowisko-arduinoide%2F&amp;format=xml">
+<!--[if lt IE 9]>
+<script src="http://aiiot.c0.pl/web/wp-content/themes/llorix-one-lite/js/html5shiv.min.js"></script>
+<![endif]-->
+		<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+		</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" class="post-template-default single single-post postid-121 single-format-standard" dir="
+																		 ltr" style=""><!--]>--><script type="text/javascript" src="http://smart.idmnet.pl/prebid.js" async="async"></script>
+<script src="http://www3.smartadserver.com/config.js?nwid=1057" type="text/javascript"></script>
+<script type="text/javascript" src="http://smart.idmnet.pl/62748/smartConfig_489125.js"></script>
+<script type="text/javascript" src="http://smart.idmnet.pl/criteoRTA.js"></script>
+<script type="text/javascript" src="http://cdn2.pollster.pl/nw.js"></script>
+<script type="text/javascript" src="http://smart.idmnet.pl/currency.js"></script>
+<script type="text/javascript" src="http://smart.idmnet.pl/prebidBoilerplate.js"></script>
+<div style="text-align:center;font-size:11px;font-family:arial;background-color:black;color:white">Jeśli jesteś właścicielem tej strony, możesz wyłączyć reklamę poniżej zmieniając pakiet na PRO lub VIP w panelu naszego <a style="color:grey" rel="nofollow" href="https://www.cba.pl/pl/oferta/hosting">hostingu</a> już od 4zł!</div>
+<div id="top_1"><!--googleoff: all--><!--noindex--><center><img usemap="#cba" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/cba1.jpg" alt=""></center><map name="cba"><area shape="rect" coords="620,50,750,100" href="https://www.cba.pl/pl/oferta/strony-www" alt="Strony WWW" rel="nofollow"><area shape="rect" coords="510,50,620,100" href="https://www.cba.pl/pl/oferta/vps" alt="Serwery VPS" rel="nofollow"><area shape="rect" coords="410,50,510,100" href="https://www.cba.pl/pl/oferta/domeny" alt="Domeny" rel="nofollow"><area shape="rect" coords="305,50,410,100" href="https://www.cba.pl/pl/oferta/hosting" alt="Hosting"><area shape="rect" coords="0,0,750,100" href="https://www.cba.pl/" alt="Darmowy Hosting CBA.pl" rel="nofollow"></map><!--/noindex--><!--googleon: all--></div>
+
+<a class="skip-link screen-reader-text" href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#content">Przeskocz do treści</a>
+<!-- =========================
+	PRE LOADER
+============================== -->
+
+
+<!-- =========================
+	SECTION: HOME / HEADER
+============================== -->
+<!--header-->
+
+<header itemscope="" itemtype="http://schema.org/WPHeader" id="masthead" role="banner" data-stellar-background-ratio="0.5" class="header header-style-one site-header">
+
+	<!-- COLOR OVER IMAGE -->
+		<div class="overlay-layer-nav 
+	sticky-navigation-open" style="min-height: 125px;">
+
+		<!-- STICKY NAVIGATION -->
+		<div class="navbar navbar-inverse bs-docs-nav navbar-fixed-top sticky-navigation appear-on-scroll" style="top: -48px;">
+							<div class="very-top-header" id="very-top-header">
+					<div class="container">
+						<div class="very-top-left">Kontakt: <span>AIIoT.Technology@gmail.com</span></div>						<div class="very-top-right">
+									<ul class="social-icons">
+								<li>
+						<a href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#">
+							<span class="screen-reader-text">fa-facebook</span>
+							<i class="fa 
+							fa-facebook transparent-text-dark" aria-hidden="true"></i>
+						</a>
+					</li>
+										<li>
+						<a href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#">
+							<span class="screen-reader-text">fa-twitter</span>
+							<i class="fa 
+							fa-twitter transparent-text-dark" aria-hidden="true"></i>
+						</a>
+					</li>
+										<li>
+						<a href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#">
+							<span class="screen-reader-text">fa-google-plus-square</span>
+							<i class="fa 
+							fa-google-plus-square transparent-text-dark" aria-hidden="true"></i>
+						</a>
+					</li>
+							</ul>
+								</div>
+					</div>
+				</div>
+				
+			<!-- CONTAINER -->
+			<div class="container">
+
+				<div class="navbar-header">
+
+					<!-- LOGO -->
+
+					<button title="Przełącz Menu" type="button" class="navbar-toggle menu-toggle" id="menu-toggle" data-toggle="collapse" data-target="#menu-primary">
+						<span class="screen-reader-text">Przełącz nawigację</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+
+					<div class="header-logo-wrap text-header"><h1 itemprop="headline" id="site-title" class="site-title"><a href="http://aiiot.c0.pl/web/" title="AIIoT" rel="home">AIIoT</a></h1><p itemprop="description" id="site-description" class="site-description">Inteligentne rozwiązania</p></div>
+				</div>
+
+				<!-- MENU -->
+				<div itemscope="" itemtype="http://schema.org/SiteNavigationElement" aria-label="Menu główne" id="menu-primary" class="navbar-collapse collapse">
+					<!-- LOGO ON STICKY NAV BAR -->
+					<div id="site-header-menu" class="site-header-menu">
+						<nav id="site-navigation" class="main-navigation" role="navigation">
+							<ul class="nav navbar-nav navbar-right main-navigation small-text no-menu"><li class="page_item page-item-2"><a href="http://aiiot.c0.pl/web/przykladowa-strona/">Przykładowa strona</a></li>
+</ul>						</nav>
+					</div>
+				</div>
+
+
+			</div>
+			<!-- /END CONTAINER -->
+		</div>
+		<!-- /END STICKY NAVIGATION -->
+
+	</div>
+	<!-- /END COLOR OVER IMAGE -->
+</header>
+<!-- /END HOME / HEADER  -->
+
+<div class="content-wrap" style="min-height: 1px;">
+	<div class="container">
+
+		<div id="primary" class="content-area 
+		col-md-8">
+			<main itemscope="" itemtype="http://schema.org/WebPageElement" itemprop="mainContentOfPage" id="main" class="site-main" role="main">
+
+			
+				
+<article id="post-121" class="content-single-page post-121 post type-post status-publish format-standard has-post-thumbnail hentry category-stm32">
+	<header class="entry-header single-header">
+		<h1 itemprop="headline" class="entry-title single-title">STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink</h1>		<div class="colored-line-left"></div>
+		<div class="clearfix"></div>
+
+		<div class="entry-meta single-entry-meta">
+			<span class="author-link" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+				<span itemprop="name" class="post-author author vcard">
+					<i class="fa fa-user" aria-hidden="true"></i>
+					<a href="http://aiiot.c0.pl/web/author/aiiot/" itemprop="url" rel="author">@AIIoT</a>
+				</span>
+			</span>
+						<time class="post-time posted-on published" datetime="2017-09-15T15:06:32+00:00" itemprop="datePublished">
+				<i class="fa fa-clock-o" aria-hidden="true"></i>
+				15 września 2017			</time>
+						<a href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#respond" class="post-comments">
+				<i class="fa fa-comment" aria-hidden="true"></i>
+				Brak komentarzy			</a>
+		</div><!-- .entry-meta -->
+	</header><!-- .entry-header -->
+
+	<div itemprop="text" class="entry-content">
+		<p><strong>W tej części poradnika pokaże jak uruchamiać programy w środowisko Arduino IDE dla płytek STM32</strong></p>
+<p>Proces zostanie przedstawiony z wykorzystanie bootloader’a&nbsp;STM32duino, nie jest on niezbędny ale znacząco ułatwi programowanie tych płytek przynajmniej w początkowym etapie.</p>
+<p>Jak wgrać bootloader &nbsp;STM32duino możesz dowiedzieć się z mojego innego poradnika.</p>
+<p>&nbsp;</p>
+<p><strong>Jeśli posiadasz już płytkę z wgranym bootloader &nbsp;STM32duino, lub porostu zmieniłeś/formatowałeś komputer nie zapomnij o wgraniu podstawowych składników.</strong></p>
+<ul>
+<li><strong>Sterowniki do usb dla&nbsp;bootloader’a &nbsp;STM32duino:</strong></li>
+</ul>
+<blockquote><p><a href="https://drive.google.com/file/d/0BwY2LTXAYDBLRkpfbExVTlVGaVE" target="_blank" rel="noopener">https://drive.google.com/drive/folders/0BwY2LTXAYDBLZnVqRXE4N0NPSjA</a></p></blockquote>
+<ul>
+<li><strong>Definicje płytek:</strong><br>
+Potrzebne będzie Arduino IDE w wersji co najmniej 1.6.9.Wchodzimy w <strong>Plik&gt;Preferencje</strong> i dopisujemy dodatkowy URL do definicji płytek:<p></p>
+<p><strong>http://dan.drown.org/arduino/package_STM32duino_index.json</strong></p><strong>
+</strong><p><strong></strong>Następne w menedżerze płytek (<strong>Narzędzia&gt;Płytka&gt;Menedżera płytek…</strong>) wyszukujemy i dodajemy płytki&nbsp;<strong>STM32F1*</strong></p></li>
+<li><strong>Pamiętaj&nbsp;&nbsp;STM32 działa na logice 3.3V podając&nbsp;wyższe napięcie uszkodzisz płytkę.</strong></li>
+</ul>
+<h3><strong>Pierwsze uruchomienie przykładowego programu:</strong></h3>
+<p>przechodzimy do&nbsp;<strong>Narzędzia</strong>&gt;<strong>Płytka</strong> i wybieramy<strong>&nbsp;Generic&nbsp;STM32F103C series</strong></p>
+<p>następnie&nbsp;przechodzimy do&nbsp;<strong>Narzędzia</strong>&gt;<strong>Upload method:</strong>&nbsp;zmienamy na <strong>STM32duino-bootloader</strong></p>
+<p>kolejno&nbsp;do&nbsp;<strong>Narzędzia</strong>&gt;<strong>Port</strong> i wybieramy odpowiedni port w nawiasie obok portu będzie napisane <strong>Maple Mini</strong></p>
+<p><img class="alignnone size-full wp-image-124" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/STM32.png" alt="" width="669" height="493" srcset="http://aiiot.c0.pl/web/wp-content/uploads/2017/09/STM32.png 669w, http://aiiot.c0.pl/web/wp-content/uploads/2017/09/STM32-300x221.png 300w" sizes="(max-width: 669px) 100vw, 669px"></p>
+<p>Teraz załadujemy przykładowy program będzie to <strong>Blink</strong></p>
+<p>przechodzimy do&nbsp;<strong>Plik</strong>&gt;<strong>Przykłady&gt;(wbudowane przykłady) 01.Basics&gt;Blink</strong></p>
+<p>Teraz możemy kliknąć<strong> Szkic</strong>&gt;<strong>Wgraj</strong></p>
+<h3><strong>OK, CZAS NA ZMIANY W PROGRAMIE </strong></h3>
+<p>możemy zmienić czas aby sprawdzić czy proces wgrywania przebiega pomyślnie</p>
+<p><strong>LED_BUILTIN</strong> jest zmienną określoną dla każdej płytki indywidualnie dla STM32 jest to pin PC13, zmienna została już zadeklarowana dodatkowo jest to zmienna statyczna, więc nie możemy jej zmienić, aby zmienić pin musimy</p>
+<p><strong>metoda 1</strong> zdefiniować nową zmienną oraz zamienić ją w miejscu zmiennej LED_BUILTIN np. powołując:</p>
+<blockquote><p><strong>static const byte LED = PC13;</strong> // jest to zmienna statyczna typu byte(zakres od od 0 do 255) ustawiona na pin PC13</p></blockquote>
+<p>Aby przyspieszyć proces podmiany możemy skorzystać z</p>
+<p><strong>Edytuj</strong>&gt;<strong>Szukaj… </strong>&nbsp;i wykożystać linie<strong> Zastąp:</strong> wpisując<strong> LED</strong> i klikająć <strong>Znajdź i zastąp</strong></p>
+<p><img class="alignnone size-full wp-image-128" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/STM1.png" alt="" width="488" height="202" srcset="http://aiiot.c0.pl/web/wp-content/uploads/2017/09/STM1.png 488w, http://aiiot.c0.pl/web/wp-content/uploads/2017/09/STM1-300x124.png 300w" sizes="(max-width: 488px) 100vw, 488px"></p>
+<p>Program powinien wyglądać tak:</p>
+<blockquote><p>/*<br>
+Blink</p>
+<p>Turns an LED on for one second, then off for one second, repeatedly.</p>
+<p>Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO<br>
+it is attached to digital pin 13, on MKR1000 on pin 6. LED is set to<br>
+the correct LED pin independent of which board is used.<br>
+If you want to know what pin the on-board LED is connected to on your Arduino<br>
+model, check the Technical Specs of your board at:<br>
+https://www.arduino.cc/en/Main/Products</p>
+<p>modified 8 May 2014<br>
+by Scott Fitzgerald<br>
+modified 2 Sep 2016<br>
+by Arturo Guadalupi<br>
+modified 8 Sep 2016<br>
+by Colby Newman<br>
+modified 15 Sep 2017<br>
+by AIIoT</p>
+<p>This example code is in the public domain.</p>
+<p>http://www.arduino.cc/en/Tutorial/Blink<br>
+*/</p>
+<p>static const byte LED = PC13;</p>
+<p>// the setup function runs once when you press reset or power the board<br>
+void setup() {<br>
+// initialize digital pin LED as an output.<br>
+pinMode(LED, OUTPUT);<br>
+}</p>
+<p>// the loop function runs over and over again forever<br>
+void loop() {<br>
+digitalWrite(LED, HIGH); // turn the LED on (HIGH is the voltage level)<br>
+delay(1000); // wait for a second<br>
+digitalWrite(LED, LOW); // turn the LED off by making the voltage LOW<br>
+delay(1000); // wait for a second<br>
+}</p></blockquote>
+<p><strong>metoda 2</strong> jednak szybszym sposobem jest zdefiniowanie polecenia dla preprocesora który za nas zamieni LED_BUILTIN na żądany przez nas pin</p>
+<blockquote><p><strong>#define LED_BUILTIN PC13</strong></p></blockquote>
+<p>&nbsp;</p>
+<p>Tak powinien wyglądać program:</p>
+<blockquote><p>/*<br>
+Blink</p>
+<p>Turns an LED on for one second, then off for one second, repeatedly.</p>
+<p>Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO<br>
+it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to<br>
+the correct LED pin independent of which board is used.<br>
+If you want to know what pin the on-board LED is connected to on your Arduino<br>
+model, check the Technical Specs of your board at:<br>
+https://www.arduino.cc/en/Main/Products</p>
+<p>modified 8 May 2014<br>
+by Scott Fitzgerald<br>
+modified 2 Sep 2016<br>
+by Arturo Guadalupi<br>
+modified 8 Sep 2016<br>
+by Colby Newman<br>
+modified 15 Sep 2017<br>
+by AIIoT</p>
+<p>This example code is in the public domain.</p>
+<p>http://www.arduino.cc/en/Tutorial/Blink<br>
+*/</p>
+<p>#define LED_BUILTIN PC13</p>
+<p>// the setup function runs once when you press reset or power the board<br>
+void setup() {<br>
+// initialize digital pin LED_BUILTIN as an output.<br>
+pinMode(LED_BUILTIN, OUTPUT);<br>
+}</p>
+<p>// the loop function runs over and over again forever<br>
+void loop() {<br>
+digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)<br>
+delay(1000); // wait for a second<br>
+digitalWrite(LED_BUILTIN, LOW); // turn the LED off by making the voltage LOW<br>
+delay(1000); // wait for a second<br>
+}</p></blockquote>
+<p>Teraz korzystając z schematu wyprowadzeń płytki możemy ustawić zmienną na dowolny pin</p>
+<p><a href="http://wiki.stm32duino.com/images/a/ae/Bluepillpinout.gif" target="_blank" rel="noopener"><img class="alignnone size-large wp-image-127" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/Bluepillpinout-1024x718.gif" alt="" width="730" height="512" srcset="http://aiiot.c0.pl/web/wp-content/uploads/2017/09/Bluepillpinout-1024x718.gif 1024w, http://aiiot.c0.pl/web/wp-content/uploads/2017/09/Bluepillpinout-300x210.gif 300w, http://aiiot.c0.pl/web/wp-content/uploads/2017/09/Bluepillpinout-768x539.gif 768w" sizes="(max-width: 730px) 100vw, 730px"></a></p>
+			</div><!-- .entry-content -->
+
+	<footer class="entry-footer">
+		<span class="cat-links"><i class="fa fa-folder-open" aria-hidden="true"></i>Opublikowany w <a href="http://aiiot.c0.pl/web/category/ardiono-ide/stm32/" rel="category tag">STM32</a></span>	</footer><!-- .entry-footer -->
+</article><!-- #post-## -->
+				
+				
+	<nav class="navigation post-navigation" role="navigation">
+		<h2 class="screen-reader-text">Nawigacja wpisu</h2>
+		<div class="nav-links"><div class="nav-previous"><a href="http://aiiot.c0.pl/web/2017/05/31/openwrt-karta-wifi-usb-rt5370/" rel="prev">LEDE/OpenWrt karta WiFi USB (RT5370)</a></div><div class="nav-next"><a href="http://aiiot.c0.pl/web/2017/09/22/odblokowanie-listy-aplikacji-instalacja-aplikacji/" rel="next">Odblokowanie listy aplikacji, Instalacja aplikacji</a></div></div>
+	</nav>
+				
+<div id="comments" class="comments-area">
+
+	
+	
+	
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Dodaj komentarz <small><a rel="nofollow" id="cancel-comment-reply-link" href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/#respond" style="display:none;">Anuluj pisanie odpowiedzi</a></small></h3>			<form action="http://aiiot.c0.pl/web/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate="">
+				<p class="comment-notes"><span id="email-notes">Twój adres email nie zostanie opublikowany.</span> Pola, których wypełnienie jest wymagane, są oznaczone symbolem <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">Komentarz</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">Podpis <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"></p>
+<p class="comment-form-url"><label for="url">Witryna internetowa</label> <input id="url" name="url" type="url" value="" size="30" maxlength="200"></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Opublikuj komentarz"> <input type="hidden" name="comment_post_ID" value="121" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="d556f07f71"></p><p style="display: none;"></p>			<input type="hidden" id="ak_js" name="ak_js" value="1507663923655"></form>
+			</div><!-- #respond -->
+	
+</div><!-- #comments -->
+
+			
+			</main><!-- #main -->
+		</div><!-- #primary -->
+
+		
+<div itemscope="" itemtype="http://schema.org/WPSideBar" role="complementary" aria-label="Główny panel boczny" id="sidebar-secondary" class="col-md-4 widget-area">
+	<aside id="search-2" class="widget widget_search"><form role="search" method="get" class="search-form" action="http://aiiot.c0.pl/web/">
+				<label>
+					<span class="screen-reader-text">Szukaj:</span>
+					<input type="search" class="search-field" placeholder="Szukaj …" value="" name="s">
+				</label>
+				<input type="submit" class="search-submit" value="Szukaj">
+			</form></aside>		<aside id="recent-posts-2" class="widget widget_recent_entries">		<h2 class="widget-title">Najnowsze wpisy</h2><div class="colored-line-left"></div><div class="clearfix widget-title-margin"></div>		<ul>
+					<li>
+				<a href="http://aiiot.c0.pl/web/2017/09/24/apps-file-manager/">[Apps] File Manager +</a>
+						</li>
+					<li>
+				<a href="http://aiiot.c0.pl/web/2017/09/22/odblokowanie-listy-aplikacji-instalacja-aplikacji/">Odblokowanie listy aplikacji, Instalacja aplikacji</a>
+						</li>
+					<li>
+				<a href="http://aiiot.c0.pl/web/2017/09/15/stm32-praca-w-srodowisko-arduinoide/">STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink</a>
+						</li>
+					<li>
+				<a href="http://aiiot.c0.pl/web/2017/05/31/openwrt-karta-wifi-usb-rt5370/">LEDE/OpenWrt karta WiFi USB (RT5370)</a>
+						</li>
+					<li>
+				<a href="http://aiiot.c0.pl/web/2017/05/23/openwrt-hilink/">OpenWrt interfejs HiLink</a>
+						</li>
+				</ul>
+		</aside>		<aside id="recent-comments-2" class="widget widget_recent_comments"><h2 class="widget-title">Najnowsze komentarze</h2><div class="colored-line-left"></div><div class="clearfix widget-title-margin"></div><ul id="recentcomments"></ul></aside><aside id="archives-2" class="widget widget_archive"><h2 class="widget-title">Archiwa</h2><div class="colored-line-left"></div><div class="clearfix widget-title-margin"></div>		<ul>
+			<li><a href="http://aiiot.c0.pl/web/2017/09/">Wrzesień 2017</a></li>
+	<li><a href="http://aiiot.c0.pl/web/2017/05/">Maj 2017</a></li>
+	<li><a href="http://aiiot.c0.pl/web/2017/04/">Kwiecień 2017</a></li>
+		</ul>
+		</aside><aside id="categories-2" class="widget widget_categories"><h2 class="widget-title">Kategorie</h2><div class="colored-line-left"></div><div class="clearfix widget-title-margin"></div>		<ul>
+	<li class="cat-item cat-item-10"><a href="http://aiiot.c0.pl/web/category/android/smartwatch/amazfit-pace/">Amazfit Pace</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://aiiot.c0.pl/web/category/ardiono-ide/esp8266/">ESP8266</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://aiiot.c0.pl/web/category/ardiono-ide/nowosci/">Nowości</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="http://aiiot.c0.pl/web/category/linux/openwrt/">OpenWrt</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://aiiot.c0.pl/web/category/ardiono-ide/stm32/">STM32</a>
+</li>
+		</ul>
+</aside><aside id="meta-2" class="widget widget_meta"><h2 class="widget-title">Meta</h2><div class="colored-line-left"></div><div class="clearfix widget-title-margin"></div>			<ul>
+			<li><a href="http://aiiot.c0.pl/web/wp-login.php?action=register">Zarejestruj się</a></li>			<li><a href="http://aiiot.c0.pl/web/wp-login.php">Zaloguj się</a></li>
+			<li><a href="http://aiiot.c0.pl/web/feed/">Kanał <abbr title="Really Simple Syndication">RSS</abbr> z wpisami</a></li>
+			<li><a href="http://aiiot.c0.pl/web/comments/feed/">Kanał <abbr title="Really Simple Syndication">RSS</abbr> z komentarzami</a></li>
+			<li><a href="https://pl.wordpress.org/" title="Ta strona jest oparta na WordPressie — nowoczesnej, semantycznej, osobistej platformie publikacyjnej.">WordPress.org</a></li>			</ul>
+			</aside></div><!-- #sidebar-secondary -->
+
+	</div>
+</div><!-- .content-wrap -->
+
+
+	<footer itemscope="" itemtype="http://schema.org/WPFooter" id="footer" role="contentinfo" class="footer grey-bg">
+
+		<div class="container">
+			<div class="footer-widget-wrap">
+			
+				
+			</div><!-- .footer-widget-wrap -->
+
+			<div class="footer-bottom-wrap">
+				<span class="llorix_one_lite_copyright_content">Copyright © AIIoT Technology 2017r</span><div itemscope="" role="navigation" itemtype="http://schema.org/SiteNavigationElement" id="menu-secondary" aria-label="Drugie menu"><h1 class="screen-reader-text">Drugie menu</h1></div>		<ul class="social-icons">
+					</ul>
+			
+						</div><!-- .footer-bottom-wrap -->
+
+
+			<div class="powered-by"><a href="http://themeisle.com/themes/llorix-one/" rel="nofollow">Llorix One Lite </a>stworzone przez<a href="http://wordpress.org/" rel="nofollow">WordPress</a></div>
+
+		</div><!-- container -->
+
+	</footer>
+
+	<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/bootstrap.min.js"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var screenReaderText = {"expand":"<span class=\"screen-reader-text\">rozwi\u0144 menu potomne<\/span>","collapse":"<span class=\"screen-reader-text\">zwi\u0144 menu potomne<\/span>"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/custom.all.js"></script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/skip-link-focus-fix.js"></script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/comment-reply.min.js"></script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/wp-embed.min.js"></script>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/form.js"></script>
+
+<!--]-->
+<div style="text-align:center;font-size:11px" class="cbalink"><a href="https://www.cba.pl/" title="darmowy hosting">Darmowy Hosting</a> CBA.PL<br><br></div>
+<script type="text/javascript" src="./STM32 Praca w środowisko Arduino_IDE – Miganie diodą Blink – AIIoT_files/r1.js"></script>
+<script type="text/javascript">
+// <![CDATA[
+var dd = document.getElementById("top_1");
+if (dd)
+{
+	var testy = document.createElement('div');
+	testy.innerHTML = '&nbsp;';
+	testy.className = 'adsbox';
+	document.body.appendChild(testy);
+	window.setTimeout(function()
+	{
+		if (testy.offsetHeight === 0)
+		{
+			dd.innerHTML = '<!--googleoff: all--><!--noindex--><center><img usemap="#cba" src="https://www.cba.pl/cba1.jpg" alt=""/></center><map name="cba"><area shape="rect" coords="620,50,750,100" href="https://www.cba.pl/pl/oferta/strony-www" alt="Strony WWW" rel="nofollow"><area shape="rect" coords="510,50,620,100" href="https://www.cba.pl/pl/oferta/vps" alt="Serwery VPS" rel="nofollow"><area shape="rect" coords="410,50,510,100" href="https://www.cba.pl/pl/oferta/domeny" alt="Domeny" rel="nofollow"><area shape="rect" coords="305,50,410,100" href="https://www.cba.pl/pl/oferta/hosting" alt="Hosting"><area shape="rect" coords="0,0,750,100" href="https://www.cba.pl" alt="Darmowy Hosting CBA.pl" rel="nofollow"></map><!--/noindex--><!--googleon: all-->';
+		}
+		testy.remove();
+	}, 100);
+}
+// ]]>
+</script>
+<div class="cumf_bt_form_wrapper" style="display:none">
+<form id="contact_us_mail_feedback" action="http://aiiot.c0.pl/oldTi9QvqM6ytokU9Q8ylQq" method="post">
+    <fieldset>
+        <!-- Form Name -->
+        <legend>Contact Us</legend>
+        <!-- Text input-->
+        <div class="cumf_bt_form-group">
+            <label class="col-md-4 cumf_bt_control-label" for="cumf_bt_name">name</label>
+            <div class="col-md-4">
+                <input id="cumf_bt_name" name="cumf_bt_name" type="text" placeholder="your name" class="cumf_bt_form-control cumf_bt_input-md">
+                <span class="cumf_bt_help-block">Please enter your name</span>
+            </div>
+        </div>
+        <!-- Text input-->
+        <div class="cumf_bt_form-group">
+            <label class="col-md-4 cumf_bt_control-label" for="cumf_bt_email">your email</label>
+            <div class="col-md-4">
+                <input id="cumf_bt_email" name="cumf_bt_email" type="text" placeholder="enter your email" class="cumf_bt_form-control cumf_bt_input-md">
+                <span class="cumf_bt_help-block">please enter your email</span>
+            </div>
+        </div>
+        <!-- Textarea -->
+        <div class="cumf_bt_form-group">
+            <label class="col-md-4 cumf_bt_control-label" for="cumf_bt_message">your message</label>
+            <div class="col-md-4">
+                <textarea class="cumf_bt_form-control" id="cumf_bt_message" name="cumf_bt_message">Message goes here</textarea>
+            </div>
+        </div>
+        <input type="submit" id="cumf_bt_submit" value="Send">
+    </fieldset>
+</form>
+</div>
+
+
+
+<!-- cba </body><!-->
+<script src="chrome-extension://hhojmcideegachlhfgfdhailpfhgknjm/web_accessible_resources/index.js"></script></body></html>

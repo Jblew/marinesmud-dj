@@ -26,7 +26,6 @@ import pl.jblew.marinesmud.dj.gui.EffectPanel;
 import pl.jblew.marinesmud.dj.scene.DMXDevice;
 import pl.jblew.marinesmud.dj.scene.DeviceGroup;
 import pl.jblew.marinesmud.dj.sound.SoundProcessingManager;
-import pl.jblew.marinesmud.dj.sound.processors.OnsetProcessor;
 import pl.jblew.marinesmud.dj.sound.processors.Processor;
 
 /**
@@ -55,7 +54,7 @@ public class KeyboardSpiker implements Effect {
 
     @Override
     public Processor[] getRequiredProcessors() {
-        return new Processor[]{OnsetProcessor.getInstance()};
+        return new Processor[]{};
     }
 
     @Override

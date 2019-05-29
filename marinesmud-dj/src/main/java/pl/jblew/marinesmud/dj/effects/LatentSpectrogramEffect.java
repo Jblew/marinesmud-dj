@@ -40,6 +40,7 @@ public class LatentSpectrogramEffect implements Effect {
     public double hue1LimiterFactor = 0.04;
     public double hue2LimiterFactor = 0.3;
     public double hue3LimiterFactor = 0.5;
+    public double hueSpace = 0;
 
     @JsonIgnore
     private final Object sync = new Object();
@@ -159,16 +160,16 @@ public class LatentSpectrogramEffect implements Effect {
                         hues = new double[]{newhue3};
                         break;
                     case 3:
-                        hues = new double[]{newhue1, newhue3, newhue1};
+                        hues = new double[]{newhue1, (newhue3+hueSpace)%1d, (newhue1+2*hueSpace)%1d};
                         break;
                     case 5:
-                        hues = new double[]{newhue1, newhue2, newhue3, newhue2, newhue1};
+                        hues = new double[]{newhue1, (newhue2+hueSpace)%1d, (newhue3+2*hueSpace)%1d, (newhue2+3*hueSpace)%1d, (newhue1+4*hueSpace)%1d};
                         break;
                     case 7:
-                        hues = new double[]{newhue0, newhue1, newhue2, newhue3, newhue2, newhue1, newhue0};
+                        hues = new double[]{newhue0, (newhue1+hueSpace)%1d, (newhue2+2*hueSpace)%1d, (newhue3+3*hueSpace)%1d, (newhue2+4*hueSpace)%1d, (newhue1+5*hueSpace)%1d, (newhue0+hueSpace)%1d};
                         break;
                     case 8:
-                        hues = new double[]{newhue0, newhue1, newhue2, newhue3, newhue3, newhue2, newhue1, newhue0};
+                        hues = new double[]{newhue0, (newhue1+hueSpace)%1d, (newhue2+2*hueSpace)%1d, (newhue3+3*hueSpace)%1d, (newhue3+4*hueSpace)%1d, (newhue2+5*hueSpace)%1d, (newhue1+6*hueSpace)%1d, (newhue0+7*hueSpace)%1d};
                         break;
                     default:
                         hues = new double[]{};
@@ -218,6 +219,7 @@ public class LatentSpectrogramEffect implements Effect {
                     LatentSpectrogramEffect.this.hue2LimiterFactor = (Double) panel.hue2LimiferFactorKnob.getKnob().getValue();
                     LatentSpectrogramEffect.this.hue3LimiterFactor = (Double) panel.hue3LimiferFactorKnob.getKnob().getValue();
                     LatentSpectrogramEffect.this.fadeSpeed = (Double) panel.fadeSpeedKnob.getKnob().getValue();
+                    LatentSpectrogramEffect.this.hueSpace = (Double) panel.hueSpaceKnob.getKnob().getValue();
 
                     if (enabled) {
                         return panel;
@@ -237,6 +239,7 @@ public class LatentSpectrogramEffect implements Effect {
         private final Knob<JSpinner> hue2LimiferFactorKnob;
         private final Knob<JSpinner> hue3LimiferFactorKnob;
         private final Knob<JSpinner> fadeSpeedKnob;
+        private final Knob<JSpinner> hueSpaceKnob;
 
         public MyEffectPanel() {
             this.setLayout(new GridLayout(0, 1));
@@ -292,6 +295,13 @@ public class LatentSpectrogramEffect implements Effect {
                                 0d, 1d, 0.001d
                         )),
                         "(%/100)");
+                
+                hueSpaceKnob = new Knob("Hue space: ",
+                        new JSpinner(new SpinnerNumberModel(
+                                LatentSpectrogramEffect.this.hueSpace,
+                                0d, 5d, 0.005d
+                        )),
+                        "(%/100)");
             }
 
             this.add(gradientSelector);
@@ -302,6 +312,7 @@ public class LatentSpectrogramEffect implements Effect {
             this.add(hue2LimiferFactorKnob);
             this.add(hue3LimiferFactorKnob);
             this.add(fadeSpeedKnob);
+            this.add(hueSpaceKnob);
         }
     }
 

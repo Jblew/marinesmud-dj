@@ -13,6 +13,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>4thline-repo</id>
+            <url>http://4thline.org/m2</url>
+            <snapshots>
+                <enabled>false</enabled> <!-- Or true, if you like to use unreleased code -->
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -51,7 +61,7 @@
             <artifactId>rxtx</artifactId>
             <version>2.1.7</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.netbeans.platform</groupId>
             <artifactId>org-openide-util</artifactId>
             <version>8.2</version>
@@ -65,6 +75,16 @@
             <groupId>org.netbeans.platform</groupId>
             <artifactId>org-netbeans-api-visual</artifactId>
             <version>8.2</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.fourthline.cling</groupId>
+            <artifactId>cling-core</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.47.Final</version>
         </dependency>
         <!--<dependency>
             <groupId>com.ftdi</groupId>

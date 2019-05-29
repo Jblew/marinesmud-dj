@@ -6,6 +6,8 @@
 package pl.jblew.marinesmud.dj.scene;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
 import jiconfont.IconCode;
 
@@ -15,6 +17,8 @@ import jiconfont.IconCode;
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 public abstract class DMXDevice {
+    private final List<DeviceGroup> groups = new ArrayList<>();
+    
     public abstract Object getSync();
     public abstract String getName();
     public abstract int getStartAddress();
@@ -56,5 +60,9 @@ public abstract class DMXDevice {
             }
             setLevels(levels);
         }
+    }
+    
+    public void registerGroup(DeviceGroup g) {
+        groups.add(g);
     }
 }

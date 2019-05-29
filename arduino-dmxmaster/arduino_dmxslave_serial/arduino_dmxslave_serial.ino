@@ -85,7 +85,7 @@ void loop() {
     analogWrite(OUT_B2, DMXSerial.read(CHAN_B2));
     digitalWrite(13, LOW);  
   } else {
-    if(l % 500 == 0) {
+    if(l % 180 == 0) {
       HSBToRGB(hue1, 255, 255, &r1, &g1, &b1);
       HSBToRGB(hue2, 255, 255, &r2, &g2, &b2);
       b1 /= 2;

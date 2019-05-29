@@ -15,11 +15,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import org.openide.util.Exceptions;
 import pl.jblew.marinesmud.dj.App;
 import pl.jblew.marinesmud.dj.config.Config;
 import pl.jblew.marinesmud.dj.config.ConfigLoader;
 import pl.jblew.marinesmud.dj.dmx.OutputManager;
+import pl.jblew.marinesmud.dj.projector.ProjectorModule;
 import pl.jblew.marinesmud.dj.scene.SceneSetup;
 import pl.jblew.marinesmud.dj.tarsos.Shared;
 
@@ -36,6 +36,12 @@ public class NorthToolbar extends JToolBar {
     public NorthToolbar(OutputManager outputManager, Config config, App app, SceneSetup currentSceneSetup) {
         this.setFloatable(false);
 
+        JButton openProjectorButton = new JButton("Open projector");
+        openProjectorButton.addActionListener((evt) -> {
+            ProjectorModule.Factory.create();
+        });
+        this.add(openProjectorButton);
+        
         JComboBox inputSelector = new JComboBox(Shared.getMixerInfo(false, true));
         inputSelector.setPreferredSize(new Dimension(250, 18));
         inputSelector.addActionListener((e) -> {

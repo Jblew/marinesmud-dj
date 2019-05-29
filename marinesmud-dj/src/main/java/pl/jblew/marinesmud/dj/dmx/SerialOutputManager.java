@@ -129,7 +129,7 @@ public class SerialOutputManager implements OutputManager {
                     SerialPort.STOPBITS_1,
                     SerialPort.PARITY_NONE);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            System.out.println("Port set pairity, baud="+serialPort.getBaudRate());
+            System.out.println("Port set pairity, baud=" + serialPort.getBaudRate());
 
             serialPort.notifyOnOutputEmpty(true);
             serialPort.addEventListener(new SerialPortEventListener() {
@@ -191,7 +191,7 @@ public class SerialOutputManager implements OutputManager {
 
         //long sTime = System.currentTimeMillis();
         DataOutputStream os = new DataOutputStream(port.getOutputStream());
-        
+
         os.write(START_VAL);
         os.write(TX_DMX_PACKET);
         os.write((byte) (channelValues.length & 0xFF));
@@ -200,16 +200,16 @@ public class SerialOutputManager implements OutputManager {
         os.write(END_VAL);
         outputBufferEmpty.set(false);
         os.flush();
-        
+
         TimeUnit.MILLISECONDS.sleep(1);
 
-        if(!outputBufferEmpty.get()) {
-        outputLock.lock();
-        try {
-            outputBufferEmptyCondition.await();
-        } finally {
-            outputLock.unlock();
-        }
+        if (!outputBufferEmpty.get()) {
+            outputLock.lock();
+            try {
+                outputBufferEmptyCondition.await();
+            } finally {
+                outputLock.unlock();
+            }
         }
 
         //while (!port.isCTS()) {
@@ -218,10 +218,8 @@ public class SerialOutputManager implements OutputManager {
         //long eTime = System.currentTimeMillis();
         //long intervalMs = (eTime-sTime);
         //System.out.println("DMX serial send time: "+intervalMs+" ms");
-        
         //send time = 1/57600*1000*10 * bytes.length ms
     }
-
 
     private void sendDMXSync() {
         SerialPort device = deviceRef.get();
@@ -229,12 +227,14 @@ public class SerialOutputManager implements OutputManager {
             //System.out.println("Starting sending DMX... (thread=" + Thread.currentThread().getName() + ")");
             long sTime = System.currentTimeMillis();
 
-            byte[] data = new byte[scene.getMaxAddr()+1];
-            
-            for(DMXDevice d : scene.devices) {
-                byte [] values = d.calculateLevels();
-                for(int i = 0;i < d.getChannelCount();i++) {
-                    if(values.length > i) data[d.getStartAddress()+i] = values[i];
+            byte[] data = new byte[scene.getMaxAddr() + 1];
+
+            for (DMXDevice d : scene.devices) {
+                byte[] values = d.calculateLevels();
+                for (int i = 0; i < d.getChannelCount(); i++) {
+                    if (values.length > i) {
+                        data[d.getStartAddress() + i] = values[i];
+                    }
                     //if(values[i] > 0) System.out.println("data["+(d.getStartAddress()+i)+"] = "+values[i]);
                 }
             }
@@ -242,7 +242,6 @@ public class SerialOutputManager implements OutputManager {
             ///data[9] = (byte) 0;//radio
             ///[10] = (byte) 255; // cieply
             ///data[11] = (byte) 0; //zimny
-
             try {
                 write(device, data);
             } catch (IOException ex) {

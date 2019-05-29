@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openide.util.Exceptions;
+import pl.jblew.marinesmud.dj.SendDMX;
 
 /**
  *
@@ -76,7 +76,8 @@ public class ConfigLoader {
             Files.copy(configFile, nextConfigBak);
             preventSavingConfig = false;
         } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+            Logger.getLogger(ConfigLoader.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 }
+

@@ -31,7 +31,6 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import jiconfont.icons.GoogleMaterialDesignIcons;
 import jiconfont.swing.IconFontSwing;
-import org.openide.util.Exceptions;
 import pl.jblew.marinesmud.dj.dmx.SingleByteCommunication;
 
 /**
@@ -40,7 +39,11 @@ import pl.jblew.marinesmud.dj.dmx.SingleByteCommunication;
  */
 public class Test {
     public static void main(String... args) throws UnsupportedEncodingException {
-
+        int v_set = 4990;
+        byte b0 = (byte)(v_set >>> 8);
+        byte b1 = (byte)v_set;
+        int v_read = b0 << 8 | b1;
+        System.out.println(v_read);
         /*try {
             List<FTDevice> fTDevices;
             fTDevices = FTDevice.getDevices(true);
@@ -143,7 +146,7 @@ public class Test {
        String encoded = Base64.getEncoder().encodeToString(toEncode.getBytes("UTF-8"));
         System.out.println(encoded);
          */
-        AtomicInteger sleepTime = new AtomicInteger(100);
+        /*AtomicInteger sleepTime = new AtomicInteger(100);
 
         JFrame frame = new JFrame("Strobe");
         frame.setSize(800, 600);
@@ -175,10 +178,10 @@ public class Test {
                 try {
                     TimeUnit.MILLISECONDS.sleep(sleepTime.get());
                 } catch (InterruptedException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(Test.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
-        }).start();
+        }).start();*/
     }
 }
 //{"device":"/dev/tty.usbmodem1411","channels":[255,123,20,30,23,210,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}
